@@ -21,6 +21,7 @@ import { ErrorState } from "@/components/shared/error-state";
 import { DetailSkeleton, ListSkeleton } from "@/components/shared/loading-skeleton";
 import { RestrictedState } from "@/components/shared/restricted-state";
 import { ConfirmableActionPlaceholder } from "@/components/shared/confirmable-action-placeholder";
+import { EquipmentImage } from "./equipment-image";
 import { useEquipmentItem } from "@/hooks/use-equipment";
 import { useCustomer } from "@/hooks/use-customers";
 import { useDealer } from "@/hooks/use-dealers";
@@ -71,7 +72,7 @@ export function EquipmentDetail({ equipmentId }: { equipmentId: string }) {
         name={item.name}
         eyebrow={item.equipmentType}
         backHref="/equipment"
-        backLabel="All equipment"
+        backLabel="Product Catalog"
         badges={
           <>
             <StatusBadge kind="equipment" status={item.currentStatus} />
@@ -100,6 +101,15 @@ export function EquipmentDetail({ equipmentId }: { equipmentId: string }) {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
+          <EquipmentImage
+            item={item}
+            width={1280}
+            sizes="(min-width: 1024px) 56rem, 92vw"
+            priority
+            rounded="rounded-2xl"
+            className="aspect-[21/9] w-full border border-border"
+          />
+
           <DetailSection title="Identification" description="Core record for this unit">
             <KeyValueList
               columns={2}

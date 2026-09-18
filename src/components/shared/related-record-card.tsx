@@ -39,15 +39,20 @@ export function RelatedRecordCard({
         </span>
       ) : null}
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-foreground">{title}</p>
-        {subtitle ? <p className="truncate text-xs text-muted-foreground">{subtitle}</p> : null}
+        {/* The record name is the identifier — it wraps rather than truncating,
+          * which matters in the narrow right-hand rail of a detail page. */}
+        <p className="line-clamp-2 text-sm leading-snug font-medium text-foreground">{title}</p>
+        {subtitle ? <p className="line-clamp-1 text-xs text-muted-foreground">{subtitle}</p> : null}
       </div>
-      {trailing}
-      <ArrowRight
-        size={14}
-        aria-hidden="true"
-        className="shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-ocean"
-      />
+      {trailing ? (
+        <div className="shrink-0">{trailing}</div>
+      ) : (
+        <ArrowRight
+          size={14}
+          aria-hidden="true"
+          className="shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-ocean"
+        />
+      )}
     </Link>
   );
 }

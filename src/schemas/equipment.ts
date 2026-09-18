@@ -11,6 +11,7 @@ export const equipmentSchema = z.object({
   id: z.string(),
   name: z.string(),
   equipmentType: z.string(),
+  productId: z.string(),
   model: z.string(),
   serialNumber: z.string(),
   currentStatus: equipmentStatusSchema,
@@ -20,4 +21,5 @@ export const equipmentSchema = z.object({
   commissionedDate: z.string().optional(),
   location: z.string().optional(),
   imageUrl: z.string().optional(),
+  lastInspectionDate: z.string().optional(),
 });

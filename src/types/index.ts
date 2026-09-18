@@ -4,6 +4,7 @@ export * from "./customer";
 export * from "./equipment";
 export * from "./service-request";
 export * from "./insight";
+export * from "./product";
 
 export interface DashboardSummary {
   openServiceRequests: number;

@@ -18,6 +18,9 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      // Deploy artefacts, not source: the Slate chunk archive and the export.
+      ".slate-static-archive/**",
+      "scripts/**",
     ],
   },
 ];

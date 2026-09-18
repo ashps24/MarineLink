@@ -1,6 +1,12 @@
 import type { Customer } from "@/types";
+import { mockEquipment } from "./mock-equipment";
+import { mockServiceRequests } from "./mock-service-requests";
+import { countEquipmentForCustomer, countOpenForCustomer } from "./derive";
 
-export const mockCustomers: Customer[] = [
+/** Customer records without the counts, which are derived below. */
+type CustomerBase = Omit<Customer, "equipmentCount" | "openServiceRequestCount">;
+
+const customerBase: CustomerBase[] = [
   {
     id: "cust-1",
     name: "Harborview Marina & Boatyard",
@@ -11,8 +17,6 @@ export const mockCustomers: Customer[] = [
     primaryContactPhone: "(206) 555-0211",
     address: "1500 Alki Ave SW, Seattle, WA 98116",
     dealerId: "dealer-1",
-    equipmentCount: 2,
-    openServiceRequestCount: 2,
     customerSince: "2015-06-01",
   },
   {
@@ -25,8 +29,6 @@ export const mockCustomers: Customer[] = [
     primaryContactPhone: "(206) 555-0223",
     address: "300 Shilshole Ave NW, Seattle, WA 98107",
     dealerId: "dealer-1",
-    equipmentCount: 1,
-    openServiceRequestCount: 0,
     customerSince: "2018-04-14",
   },
   {
@@ -39,8 +41,6 @@ export const mockCustomers: Customer[] = [
     primaryContactPhone: "(360) 555-0165",
     address: "912 Marine Dr, Bellingham, WA 98225",
     dealerId: "dealer-1",
-    equipmentCount: 1,
-    openServiceRequestCount: 1,
     customerSince: "2020-02-19",
   },
   {
@@ -53,8 +53,6 @@ export const mockCustomers: Customer[] = [
     primaryContactPhone: "(813) 555-0247",
     address: "3801 Maritime Blvd, Tampa, FL 33605",
     dealerId: "dealer-2",
-    equipmentCount: 2,
-    openServiceRequestCount: 2,
     customerSince: "2013-11-08",
   },
   {
@@ -67,8 +65,6 @@ export const mockCustomers: Customer[] = [
     primaryContactPhone: "(228) 555-0139",
     address: "1100 Cowan Rd, Gulfport, MS 39501",
     dealerId: "dealer-2",
-    equipmentCount: 1,
-    openServiceRequestCount: 0,
     customerSince: "2019-08-30",
   },
   {
@@ -81,8 +77,6 @@ export const mockCustomers: Customer[] = [
     primaryContactPhone: "(727) 555-0182",
     address: "244 2nd Ave SE, St. Petersburg, FL 33701",
     dealerId: "dealer-2",
-    equipmentCount: 1,
-    openServiceRequestCount: 1,
     customerSince: "2021-01-12",
   },
   {
@@ -95,8 +89,6 @@ export const mockCustomers: Customer[] = [
     primaryContactPhone: "(207) 555-0114",
     address: "56 Fore St, Portland, ME 04101",
     dealerId: "dealer-3",
-    equipmentCount: 1,
-    openServiceRequestCount: 1,
     customerSince: "2017-09-25",
   },
   {
@@ -109,8 +101,6 @@ export const mockCustomers: Customer[] = [
     primaryContactPhone: "(207) 555-0158",
     address: "220 Commercial St, Portland, ME 04101",
     dealerId: "dealer-3",
-    equipmentCount: 2,
-    openServiceRequestCount: 1,
     customerSince: "2016-03-07",
   },
   {
@@ -123,8 +113,6 @@ export const mockCustomers: Customer[] = [
     primaryContactPhone: "(843) 555-0121",
     address: "10 Wharfside St, Charleston, SC 29401",
     dealerId: "dealer-4",
-    equipmentCount: 1,
-    openServiceRequestCount: 0,
     customerSince: "2022-05-16",
   },
   {
@@ -137,8 +125,6 @@ export const mockCustomers: Customer[] = [
     primaryContactPhone: "(843) 555-0197",
     address: "402 Meeting St, Charleston, SC 29403",
     dealerId: "dealer-4",
-    equipmentCount: 1,
-    openServiceRequestCount: 1,
     customerSince: "2024-01-09",
   },
   {
@@ -151,8 +137,6 @@ export const mockCustomers: Customer[] = [
     primaryContactPhone: "(231) 555-0163",
     address: "13309 W Bay Shore Dr, Traverse City, MI 49684",
     dealerId: "dealer-5",
-    equipmentCount: 1,
-    openServiceRequestCount: 1,
     customerSince: "2015-10-21",
   },
   {
@@ -165,8 +149,12 @@ export const mockCustomers: Customer[] = [
     primaryContactPhone: "(231) 555-0175",
     address: "825 W Grandview Pkwy, Traverse City, MI 49684",
     dealerId: "dealer-5",
-    equipmentCount: 1,
-    openServiceRequestCount: 0,
     customerSince: "2019-06-04",
   },
 ];
+
+export const mockCustomers: Customer[] = customerBase.map((customer) => ({
+  ...customer,
+  equipmentCount: countEquipmentForCustomer(mockEquipment, customer.id),
+  openServiceRequestCount: countOpenForCustomer(mockServiceRequests, customer.id),
+}));

@@ -28,4 +28,9 @@ export const serviceRequestSchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
   summary: z.string(),
+  kind: z.enum(["corrective", "scheduled"]),
+  unitOutOfService: z.boolean(),
+  statusChangedAt: z.string(),
+  resolvedAt: z.string().optional(),
+  partsEtaDate: z.string().optional(),
 });

@@ -12,6 +12,8 @@ import { EquipmentPreview } from "./equipment-preview";
 import { DetailSection } from "@/components/shared/detail-section";
 import { RelatedRecordCard } from "@/components/shared/related-record-card";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { EmptyState } from "@/components/shared/empty-state";
+import { ErrorState } from "@/components/shared/error-state";
 import { ListSkeleton } from "@/components/shared/loading-skeleton";
 import { useCustomers } from "@/hooks/use-customers";
 import type { User } from "@/types";
@@ -21,7 +23,7 @@ import type { User } from "@/types";
  * company-wide metrics and no other dealers.
  */
 export function DealerDashboard({ user }: { user: User }) {
-  const { data: customers, isPending } = useCustomers();
+  const { data: customers, isPending, isError, refetch } = useCustomers();
   const accounts = (customers ?? []).slice(0, 4);
 
   return (
@@ -70,6 +72,14 @@ export function DealerDashboard({ user }: { user: User }) {
           >
             {isPending ? (
               <ListSkeleton count={3} label="Loading customers" />
+            ) : isError ? (
+              <ErrorState
+                title="Could not load customers"
+                description="The customer service did not respond."
+                onRetry={() => refetch()}
+              />
+            ) : accounts.length === 0 ? (
+              <EmptyState icon={UsersThree} title="No customers on record" />
             ) : (
               <div className="space-y-2">
                 {accounts.map((customer) => (

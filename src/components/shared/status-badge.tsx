@@ -25,6 +25,20 @@ export const toneClasses: Record<SemanticTone, string> = {
   danger: "bg-destructive/10 text-destructive ring-destructive/25 dark:bg-destructive/15",
 };
 
+/**
+ * Opaque treatment for badges sitting on top of a photograph. The tinted
+ * backgrounds above are mixed against a card surface; over an image they lose
+ * contrast, so these swap the tint for the card colour and keep the tone in the
+ * text and ring.
+ */
+export const onMediaToneClasses: Record<SemanticTone, string> = {
+  neutral: "bg-card text-muted-foreground ring-border shadow-sm",
+  info: "bg-card text-info ring-info/30 shadow-sm",
+  success: "bg-card text-success ring-success/30 shadow-sm",
+  warning: "bg-card text-warning-foreground ring-warning/40 shadow-sm dark:text-warning",
+  danger: "bg-card text-destructive ring-destructive/30 shadow-sm",
+};
+
 const dotClasses: Record<SemanticTone, string> = {
   neutral: "bg-muted-foreground/60",
   info: "bg-info",
@@ -39,14 +53,22 @@ interface StatusBadgeBaseProps {
   className?: string;
   /** Status is never carried by colour alone — the dot is decorative only. */
   showDot?: boolean;
+  /** Use the opaque treatment, for badges placed over photography. */
+  onMedia?: boolean;
 }
 
-export function ToneBadge({ label, tone, className, showDot = true }: StatusBadgeBaseProps) {
+export function ToneBadge({
+  label,
+  tone,
+  className,
+  showDot = true,
+  onMedia = false,
+}: StatusBadgeBaseProps) {
   return (
     <span
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset whitespace-nowrap",
-        toneClasses[tone],
+        onMedia ? onMediaToneClasses[tone] : toneClasses[tone],
         className,
       )}
     >
@@ -62,11 +84,12 @@ export function StatusBadge({
   kind,
   status,
   className,
+  onMedia,
 }:
-  | { kind: "dealer"; status: DealerStatus; className?: string }
-  | { kind: "customer"; status: CustomerStatus; className?: string }
-  | { kind: "equipment"; status: EquipmentStatus; className?: string }
-  | { kind: "service"; status: ServiceRequestStatus; className?: string }) {
+  | { kind: "dealer"; status: DealerStatus; className?: string; onMedia?: boolean }
+  | { kind: "customer"; status: CustomerStatus; className?: string; onMedia?: boolean }
+  | { kind: "equipment"; status: EquipmentStatus; className?: string; onMedia?: boolean }
+  | { kind: "service"; status: ServiceRequestStatus; className?: string; onMedia?: boolean }) {
   const config =
     kind === "dealer"
       ? dealerStatusConfig[status]
@@ -76,5 +99,12 @@ export function StatusBadge({
           ? equipmentStatusConfig[status]
           : serviceStatusConfig[status];
 
-  return <ToneBadge label={config.label} tone={config.tone} className={className} />;
+  return (
+    <ToneBadge
+      label={config.label}
+      tone={config.tone}
+      className={className}
+      onMedia={onMedia}
+    />
+  );
 }

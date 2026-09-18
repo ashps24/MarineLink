@@ -13,3 +13,5 @@ export * from "./customers";
 export * from "./equipment";
 export * from "./service-requests";
 export * from "./dashboard";
+export * from "./executive";
+export * from "./products";

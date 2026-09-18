@@ -16,6 +16,7 @@ import {
   visibleServiceRequests,
 } from "@/lib/permissions/visibility";
 import { serviceStatusOrder } from "@/lib/constants/status";
+import { hoursSince } from "@/lib/constants/time";
 import { mockRequest } from "./client";
 import type { RequestScope } from "./types";
 
@@ -83,6 +84,27 @@ export async function getDashboardInsights(scope: RequestScope): Promise<Dashboa
     const equipment = visibleEquipment(scope, mockEquipment);
     const dealers = visibleDealers(scope, mockDealers);
     const insights: DashboardInsight[] = [];
+
+    for (const request of requests) {
+      const hoursOld = hoursSince(request.createdAt);
+      if (
+        request.status === "new" &&
+        (request.priority === "urgent" || request.priority === "high") &&
+        hoursOld > 24
+      ) {
+        insights.push({
+          id: `insight-unpicked-${request.id}`,
+          title: `${request.referenceNumber} not yet picked up`,
+          description: `${request.subject} has sat in "new" for ${Math.round(
+            hoursOld / 24,
+          )} day(s) with ${request.assignedTeam}.`,
+          severity: request.priority === "urgent" ? "critical" : "attention",
+          entityType: "service",
+          entityId: request.id,
+          actionLabel: "Review request",
+        });
+      }
+    }
 
     for (const request of requests) {
       if (request.priority === "urgent" && isOpenRequest(request)) {

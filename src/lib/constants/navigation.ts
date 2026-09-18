@@ -4,7 +4,7 @@ import {
   SquaresFour,
   Buildings,
   UsersThree,
-  Wrench,
+  Package,
   ClipboardText,
   UserCircle,
 } from "@phosphor-icons/react/dist/ssr";
@@ -48,15 +48,15 @@ export const navItems: NavItem[] = [
     roles: ["customer"],
   },
   {
-    label: "Equipment",
+    label: "Product Catalog",
     href: "/equipment",
-    icon: Wrench,
+    icon: Package,
     roles: ["internal", "dealer"],
   },
   {
-    label: "My Equipment",
+    label: "My Product Catalog",
     href: "/equipment",
-    icon: Wrench,
+    icon: Package,
     roles: ["customer"],
   },
   {

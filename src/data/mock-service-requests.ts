@@ -1,6 +1,11 @@
 import type { ServiceRequest } from "@/types";
+import { generatedServiceHistory } from "./generated-service-history";
 
-export const mockServiceRequests: ServiceRequest[] = [
+/**
+ * The current, hand-written requests. These are the ones the UI shows in
+ * detail, so they carry properly specific subjects and summaries.
+ */
+const recentServiceRequests: ServiceRequest[] = [
   {
     id: "sr-1",
     referenceNumber: "SR-2026-1042",
@@ -15,6 +20,9 @@ export const mockServiceRequests: ServiceRequest[] = [
     updatedAt: "2026-09-16T09:05:00-07:00",
     summary:
       "Operator reported inconsistent hydraulic pressure on the main hoist cylinders during a routine haul-out. Field technician has isolated the issue to a worn relief valve and is sourcing a replacement part.",
+    kind: "corrective",
+    unitOutOfService: true,
+    statusChangedAt: "2026-09-16T09:05:00-07:00",
   },
   {
     id: "sr-2",
@@ -30,6 +38,9 @@ export const mockServiceRequests: ServiceRequest[] = [
     updatedAt: "2026-09-15T11:00:00-07:00",
     summary:
       "Yard crew flagged uneven tire wear on the multi-purpose trailer ahead of the fall haul-out season and requested an inspection before next scheduled use.",
+    kind: "corrective",
+    unitOutOfService: false,
+    statusChangedAt: "2026-09-15T11:00:00-07:00",
   },
   {
     id: "sr-3",
@@ -45,6 +56,10 @@ export const mockServiceRequests: ServiceRequest[] = [
     updatedAt: "2026-08-29T16:40:00-07:00",
     summary:
       "Scheduled annual inspection covering wire rope, brakes, and hydraulic fluid analysis. All systems passed inspection with no follow-up action required.",
+    kind: "scheduled",
+    unitOutOfService: false,
+    statusChangedAt: "2026-08-29T16:40:00-07:00",
+    resolvedAt: "2026-08-29T16:40:00-07:00",
   },
   {
     id: "sr-4",
@@ -60,6 +75,10 @@ export const mockServiceRequests: ServiceRequest[] = [
     updatedAt: "2026-09-14T13:20:00-07:00",
     summary:
       "Routine inspection found surface wear beyond tolerance on two of four main hoist wire ropes. Replacement cable has been ordered from the factory and is awaiting delivery before the unit returns to full service.",
+    kind: "corrective",
+    unitOutOfService: true,
+    statusChangedAt: "2026-09-14T13:20:00-07:00",
+    partsEtaDate: "2026-09-24",
   },
   {
     id: "sr-5",
@@ -75,6 +94,9 @@ export const mockServiceRequests: ServiceRequest[] = [
     updatedAt: "2026-09-17T08:10:00-04:00",
     summary:
       "Load sensor alarm triggered mid-lift with a 68-foot sportfisher currently suspended in the slings. Operations paused and a technician has been dispatched for immediate on-site diagnosis.",
+    kind: "corrective",
+    unitOutOfService: true,
+    statusChangedAt: "2026-09-17T08:10:00-04:00",
   },
   {
     id: "sr-6",
@@ -90,6 +112,9 @@ export const mockServiceRequests: ServiceRequest[] = [
     updatedAt: "2026-09-16T15:30:00-04:00",
     summary:
       "Visible hydraulic fluid pooling beneath the mast assembly. Technician has traced the leak to a cracked hose fitting and is completing the repair on-site.",
+    kind: "corrective",
+    unitOutOfService: false,
+    statusChangedAt: "2026-09-16T15:30:00-04:00",
   },
   {
     id: "sr-7",
@@ -105,6 +130,10 @@ export const mockServiceRequests: ServiceRequest[] = [
     updatedAt: "2026-08-10T12:00:00-04:00",
     summary:
       "Applied the latest load monitoring firmware release to resolve intermittent display glitches. Update verified and unit returned to normal operation.",
+    kind: "scheduled",
+    unitOutOfService: false,
+    statusChangedAt: "2026-08-10T12:00:00-04:00",
+    resolvedAt: "2026-08-10T12:00:00-04:00",
   },
   {
     id: "sr-8",
@@ -120,6 +149,9 @@ export const mockServiceRequests: ServiceRequest[] = [
     updatedAt: "2026-09-16T10:10:00-04:00",
     summary:
       "Requested inspection after hauling a vessel near maximum rated capacity. Technician is completing a full sling and strap assessment before the unit resumes normal lift schedule.",
+    kind: "corrective",
+    unitOutOfService: false,
+    statusChangedAt: "2026-09-16T10:10:00-04:00",
   },
   {
     id: "sr-9",
@@ -135,6 +167,9 @@ export const mockServiceRequests: ServiceRequest[] = [
     updatedAt: "2026-09-16T08:00:00-04:00",
     summary:
       "Unit has been in winter storage and the yard has requested a full readiness inspection ahead of the upcoming haul-out season.",
+    kind: "scheduled",
+    unitOutOfService: false,
+    statusChangedAt: "2026-09-16T08:00:00-04:00",
   },
   {
     id: "sr-10",
@@ -150,6 +185,10 @@ export const mockServiceRequests: ServiceRequest[] = [
     updatedAt: "2026-09-17T11:25:00-04:00",
     summary:
       "Steering axle bearing failed during a routine move, taking the unit out of service. Replacement bearing assembly has been expedited and is en route to the yard.",
+    kind: "corrective",
+    unitOutOfService: true,
+    statusChangedAt: "2026-09-17T11:25:00-04:00",
+    partsEtaDate: "2026-09-15",
   },
   {
     id: "sr-11",
@@ -165,6 +204,10 @@ export const mockServiceRequests: ServiceRequest[] = [
     updatedAt: "2026-09-02T14:00:00-04:00",
     summary:
       "Completed on-site refresher training for two yard operators covering updated lift procedures and emergency stop protocols.",
+    kind: "scheduled",
+    unitOutOfService: false,
+    statusChangedAt: "2026-09-02T14:00:00-04:00",
+    resolvedAt: "2026-09-02T14:00:00-04:00",
   },
   {
     id: "sr-12",
@@ -180,6 +223,9 @@ export const mockServiceRequests: ServiceRequest[] = [
     updatedAt: "2026-09-15T09:00:00-04:00",
     summary:
       "Scheduled 250-hour service including fluid changes, filter replacement, and a full mechanical inspection currently underway.",
+    kind: "scheduled",
+    unitOutOfService: false,
+    statusChangedAt: "2026-09-15T09:00:00-04:00",
   },
   {
     id: "sr-13",
@@ -195,6 +241,9 @@ export const mockServiceRequests: ServiceRequest[] = [
     updatedAt: "2026-09-17T09:00:00-04:00",
     summary:
       "Operator noticed the beam extension was not seating evenly during a recent lift. Request submitted for inspection before the next scheduled haul.",
+    kind: "corrective",
+    unitOutOfService: false,
+    statusChangedAt: "2026-09-17T09:00:00-04:00",
   },
   {
     id: "sr-14",
@@ -210,5 +259,20 @@ export const mockServiceRequests: ServiceRequest[] = [
     updatedAt: "2026-08-19T15:00:00-04:00",
     summary:
       "Replaced a failed wash-down pump motor. System tested under load and confirmed fully operational.",
+    kind: "corrective",
+    unitOutOfService: false,
+    statusChangedAt: "2026-08-19T15:00:00-04:00",
+    resolvedAt: "2026-08-19T15:00:00-04:00",
   },
 ];
+
+/**
+ * Everything the app reads: the recent hand-written requests plus a year of
+ * generated history behind them, newest first. The history exists so the
+ * executive metrics have a baseline to compare against and enough resolved work
+ * to compute a resolution time from.
+ */
+export const mockServiceRequests: ServiceRequest[] = [
+  ...recentServiceRequests,
+  ...generatedServiceHistory,
+].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
