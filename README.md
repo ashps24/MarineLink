@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MarineLink
 
-## Getting Started
+A role-based marine equipment relationship and service platform connecting
+Marine Travelift, its dealers, and their customers in one workspace.
 
-First, run the development server:
+**Phase 1 is frontend only.** Every screen reads from a mock service layer with
+deterministic fixtures — there is no backend, database, authentication, or Zoho
+integration. The demo role selector swaps which mock user the UI renders for; it
+is not a login, and the interface says so wherever it appears.
+
+## Running it
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+To exercise the app exactly as Catalyst Slate serves it — exact-match file
+serving, no directory indexes, root document for every unmatched path:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build:slate
+npm run serve:slate
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Deploying
 
-## Learn More
+```bash
+npm run deploy:slate
+```
 
-To learn more about Next.js, take a look at the following resources:
+The script pins a release id, writes `version.json`, recreates the Slate config
+inside the build output, and carries previous builds' static chunks forward so
+long-cached documents keep working. See the comments in
+[`scripts/deploy-slate.sh`](scripts/deploy-slate.sh) for why each step exists.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Where the integration seams are
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Concern | Lives in | Replaced by |
+| --- | --- | --- |
+| Data access | `src/lib/mock-api/` | Zoho-backed service clients |
+| Visibility rules | `src/lib/permissions/visibility.ts` | Server-side authorization |
+| Current user | `src/hooks/use-current-user.ts` | A real session |
+| Management insights | `getDashboardInsights` in `src/lib/mock-api/dashboard.ts` | Model-generated, advisory insights |
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The UI depends on the shapes in `src/types/`, never on how a record was
+fetched, so swapping the mock layer should not require rewriting screens.

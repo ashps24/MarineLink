@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Catalyst — these hold org/project ids and absolute machine paths
+.catalystrc
+catalyst.json
+.catalyst/
+
+# Slate release bookkeeping
+.slate-static-archive/

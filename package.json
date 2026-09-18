@@ -6,22 +6,43 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "serve:slate": "python3 scripts/serve-slate.py",
+    "build:slate": "NEXT_PUBLIC_SLATE_FALLBACK=1 next build",
+    "deploy:slate": "./scripts/deploy-slate.sh"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.9.1",
+    "@phosphor-icons/react": "^2.1.10",
+    "@tanstack/react-query": "^5.103.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cn": "^0.3.0",
+    "framer-motion": "^13.4.0",
+    "next": "15.5.25",
+    "next-themes": "^0.4.6",
+    "radix-ui": "^1.6.7",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "next": "15.5.25"
+    "react-hook-form": "^7.88.0",
+    "shadcn": "^4.21.0",
+    "sonner": "^2.0.8",
+    "tailwind-merge": "^3.7.0",
+    "zod": "^4.6.5",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@tanstack/react-query-devtools": "^5.103.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.5.25",
-    "@eslint/eslintrc": "^3"
+    "tailwindcss": "^4",
+    "tw-animate-css": "^1.4.0",
+    "typescript": "^5"
   }
 }
