@@ -96,9 +96,13 @@ const bootstrapScript = `(function () {
       .then(function (res) { return res.ok ? res.json() : null; })
       .then(function (v) {
         if (!v || !v.release || v.release === loaded) return;
-        var key = 'marinelink:healed:' + v.release;
-        if (window.sessionStorage.getItem(key)) return; // already tried once
-        window.sessionStorage.setItem(key, '1');
+        // Guard against a reload loop on THIS navigation only — not a
+        // session-wide "already healed" flag. A session-wide flag once let a
+        // tab heal to release X on one page, then silently keep serving a
+        // DIFFERENT stale document (cached under a different URL, from an
+        // even older release) on a later navigation in the same tab, because
+        // it had already "used up" its one heal for release X.
+        if (new URL(window.location.href).searchParams.get('_v') === v.release) return;
         var url = new URL(isDeepLink ? requested : window.location.href, window.location.origin);
         url.searchParams.set('_v', v.release);
         window.location.replace(url.toString());

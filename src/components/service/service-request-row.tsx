@@ -34,7 +34,7 @@ export function ServiceRequestRow({
       transition={{ duration: 0.25, delay: reduceMotion ? 0 : Math.min(index, 10) * 0.03 }}
       className={className}
     >
-      <Link
+      <Link prefetch={false}
         href={`/service/${request.id}`}
         className={cn(
           "group block rounded-2xl border border-border bg-card p-4 transition-all",

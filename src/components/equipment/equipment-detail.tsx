@@ -134,7 +134,7 @@ export function EquipmentDetail({ equipmentId }: { equipmentId: string }) {
             description="Requests raised against this unit"
             contentClassName="p-4"
             action={
-              <Link
+              <Link prefetch={false}
                 href="/service"
                 className="rounded-md text-xs font-medium text-ocean hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
               >

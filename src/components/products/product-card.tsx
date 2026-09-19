@@ -32,6 +32,7 @@ export function ProductCard({
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
         {product.imageUrl ? (
           <Image
+            referrerPolicy="no-referrer"
             src={imgSrc(product.imageUrl, 480)}
             alt={product.name}
             fill

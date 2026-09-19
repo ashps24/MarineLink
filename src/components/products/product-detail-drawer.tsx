@@ -39,6 +39,7 @@ export function ProductDetailDrawer({
         {product.imageUrl ? (
           <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-muted">
             <Image
+            referrerPolicy="no-referrer"
               src={imgSrc(product.imageUrl, 800)}
               alt={product.name}
               fill

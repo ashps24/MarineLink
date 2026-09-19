@@ -29,7 +29,7 @@ export function MobileNav() {
 
           return (
             <li key={`${item.label}-${item.href}`}>
-              <Link
+              <Link prefetch={false}
                 href={href}
                 aria-current={active ? "page" : undefined}
                 className={cn(

@@ -31,7 +31,7 @@ export function ServiceStatusSummary() {
       title="Service pipeline"
       description="Every request you can see, by status"
       action={
-        <Link
+        <Link prefetch={false}
           href="/service"
           className="rounded-md text-xs font-medium text-ocean hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
         >
@@ -85,7 +85,7 @@ export function ServiceStatusSummary() {
               const config = serviceStatusConfig[row.status];
               return (
                 <li key={row.status}>
-                  <Link
+                  <Link prefetch={false}
                     href={`/service?status=${row.status}`}
                     className="group flex items-center gap-2 rounded-md py-0.5 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                   >

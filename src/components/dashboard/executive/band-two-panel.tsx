@@ -49,7 +49,7 @@ export function DealerLoadPanel({ className }: { className?: string }) {
             <span className="text-right">Median resolve</span>
           </div>
           {dealerLoad.rows.map((row) => (
-            <Link
+            <Link prefetch={false}
               key={row.dealerId}
               href={`/dealers/${row.dealerId}`}
               className="grid grid-cols-[1fr_auto_auto] items-center gap-3 px-5 py-3 transition-colors hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
@@ -135,7 +135,7 @@ export function UncoveredBasePanel({ className }: { className?: string }) {
             </span>
           </div>
           {uncoveredInstalledBase.dealers.map((dealer) => (
-            <Link
+            <Link prefetch={false}
               key={dealer.dealerId}
               href={`/dealers/${dealer.dealerId}`}
               className="group flex items-center gap-2 rounded-lg border border-border bg-background/60 p-2.5 text-sm transition-colors hover:border-ocean/40 hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"

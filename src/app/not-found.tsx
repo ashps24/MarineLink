@@ -12,7 +12,7 @@ export default function NotFound() {
         description="The link may be out of date, or the record may have been removed."
         action={
           <Button asChild variant="outline" size="lg" className="h-10">
-            <Link href="/">Back to dashboard</Link>
+            <Link prefetch={false} href="/">Back to dashboard</Link>
           </Button>
         }
       />

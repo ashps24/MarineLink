@@ -23,7 +23,7 @@ export function RestrictedState({
       description={description}
       action={
         <Button asChild variant="outline" size="lg" className="h-10">
-          <Link href="/">Back to dashboard</Link>
+          <Link prefetch={false} href="/">Back to dashboard</Link>
         </Button>
       }
     />

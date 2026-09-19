@@ -25,7 +25,7 @@ export function RelatedRecordCard({
   className?: string;
 }) {
   return (
-    <Link
+    <Link prefetch={false}
       href={href}
       className={cn(
         "group flex items-center gap-3 rounded-xl border border-border bg-background/60 p-3 transition-all",

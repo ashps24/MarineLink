@@ -26,7 +26,7 @@ export function DetailHeader({
 }) {
   return (
     <div className={cn("space-y-4", className)}>
-      <Link
+      <Link prefetch={false}
         href={backHref}
         className="inline-flex items-center gap-1.5 rounded-md text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
       >

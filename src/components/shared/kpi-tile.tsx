@@ -141,7 +141,7 @@ export function KpiTile({
       transition={{ duration: 0.3, delay: reduceMotion ? 0 : index * 0.05, ease: "easeOut" }}
     >
       {href ? (
-        <Link href={href} className={shell}>
+        <Link prefetch={false} href={href} className={shell}>
           {body}
         </Link>
       ) : (

@@ -73,7 +73,7 @@ export function BarList({
           return (
             <li key={datum.key}>
               {datum.href ? (
-                <Link
+                <Link prefetch={false}
                   href={datum.href}
                   className="block rounded-lg px-1 py-1 transition-colors hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                 >

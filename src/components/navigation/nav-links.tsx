@@ -42,7 +42,7 @@ export function SidebarNav({
         const ItemIcon = item.icon;
 
         return (
-          <Link
+          <Link prefetch={false}
             key={`${item.label}-${item.href}`}
             href={href}
             onClick={onNavigate}

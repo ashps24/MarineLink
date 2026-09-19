@@ -33,7 +33,7 @@ export function DealerDashboard({ user }: { user: User }) {
         description={`Service activity and equipment across ${user.organizationName}.`}
         actions={
           <Button asChild variant="outline" size="lg" className="h-10">
-            <Link href={`/dealers/${user.organizationId}`}>
+            <Link prefetch={false} href={`/dealers/${user.organizationId}`}>
               <Buildings aria-hidden="true" />
               Dealer profile
               <ArrowRight aria-hidden="true" />
@@ -62,7 +62,7 @@ export function DealerDashboard({ user }: { user: User }) {
             description="Accounts you support"
             contentClassName="p-4"
             action={
-              <Link
+              <Link prefetch={false}
                 href="/customers"
                 className="rounded-md text-xs font-medium text-ocean hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
               >

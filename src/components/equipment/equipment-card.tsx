@@ -29,7 +29,7 @@ export function EquipmentCard({
       transition={{ duration: 0.28, delay: reduceMotion ? 0 : Math.min(index, 8) * 0.04 }}
       className={className}
     >
-      <Link
+      <Link prefetch={false}
         href={`/equipment/${item.id}`}
         className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:-translate-y-0.5 hover:border-ocean/40 hover:shadow-lg hover:shadow-primary/5 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
       >

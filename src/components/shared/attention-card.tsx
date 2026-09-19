@@ -61,7 +61,7 @@ export function AttentionCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.28, delay: reduceMotion ? 0 : index * 0.04, ease: "easeOut" }}
     >
-      <Link
+      <Link prefetch={false}
         href={insightHref(insight)}
         className={cn(
           "group relative block overflow-hidden rounded-2xl border border-border bg-card p-4 pl-5 transition-all",

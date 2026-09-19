@@ -65,6 +65,7 @@ export function EquipmentImage({
 
       {item.imageUrl && !failed ? (
         <Image
+            referrerPolicy="no-referrer"
           src={equipmentImageSrc(item.imageUrl, width)}
           alt={`${item.equipmentType} similar to ${item.name}`}
           fill

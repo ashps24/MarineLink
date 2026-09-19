@@ -50,7 +50,7 @@ export function UserMenu() {
         <DropdownMenuSeparator />
         {profileHref ? (
           <DropdownMenuItem asChild>
-            <Link href={profileHref}>
+            <Link prefetch={false} href={profileHref}>
               <UserCircle size={16} aria-hidden="true" />
               My organization profile
             </Link>
