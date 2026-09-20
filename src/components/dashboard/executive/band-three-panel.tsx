@@ -64,7 +64,7 @@ export function BandThreePanel() {
               .map((row) => (
                 <RelatedRecordCard
                   key={row.equipmentId}
-                  href={`/equipment/${row.equipmentId}`}
+                  href={`/equipment/view/?id=${row.equipmentId}`}
                   title={row.name}
                   subtitle={
                     row.daysSinceRecord !== null
@@ -94,7 +94,7 @@ export function BandThreePanel() {
             {agedFleet.rows.slice(0, 4).map((row) => (
               <RelatedRecordCard
                 key={row.equipmentId}
-                href={`/equipment/${row.equipmentId}`}
+                href={`/equipment/view/?id=${row.equipmentId}`}
                 title={row.name}
                 subtitle={`${row.ageYears}y old${row.liftCapacityTons ? ` · ${row.liftCapacityTons}t` : ""}`}
                 icon={CalendarBlank}

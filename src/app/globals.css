@@ -258,3 +258,12 @@ html[data-deeplink] #app-root {
     transform: scaleY(0.7);
   }
 }
+
+/* Catalyst's sign-in widget injects an iframe with inline width and height
+ * (150px tall), which crops the email field out of view. Its own inline
+ * style is the reason this needs !important rather than a utility class. */
+#catalyst-signin iframe {
+  width: 100% !important;
+  height: 26rem !important;
+  border: 0 !important;
+}

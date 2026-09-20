@@ -10,6 +10,7 @@ import {
   CalendarBlank,
   Wrench as WrenchIcon,
 } from "@phosphor-icons/react/dist/ssr";
+import { Button } from "@/components/ui/button";
 import { DetailHeader } from "@/components/shared/detail-header";
 import { DetailSection } from "@/components/shared/detail-section";
 import { KeyValueList } from "@/components/shared/key-value-list";
@@ -20,7 +21,6 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { DetailSkeleton, ListSkeleton } from "@/components/shared/loading-skeleton";
 import { RestrictedState } from "@/components/shared/restricted-state";
-import { ConfirmableActionPlaceholder } from "@/components/shared/confirmable-action-placeholder";
 import { EquipmentImage } from "./equipment-image";
 import { useEquipmentItem } from "@/hooks/use-equipment";
 import { useCustomer } from "@/hooks/use-customers";
@@ -91,11 +91,12 @@ export function EquipmentDetail({ equipmentId }: { equipmentId: string }) {
           </>
         }
         actions={
-          <ConfirmableActionPlaceholder
-            label="Request service"
-            description="Creating service requests arrives in a later phase. This build is view-and-track only."
-            icon={<WrenchIcon aria-hidden="true" />}
-          />
+          <Button asChild size="sm">
+            <Link prefetch={false} href={`/service/new/?equipmentId=${item.id}`}>
+              <WrenchIcon aria-hidden="true" />
+              Request service
+            </Link>
+          </Button>
         }
       />
 
@@ -155,7 +156,7 @@ export function EquipmentDetail({ equipmentId }: { equipmentId: string }) {
                 {(requests ?? []).map((request) => (
                   <RelatedRecordCard
                     key={request.id}
-                    href={`/service/${request.id}`}
+                    href={`/service/view/?id=${request.id}`}
                     title={request.subject}
                     subtitle={`${request.referenceNumber} · updated ${formatRelativeTime(request.updatedAt)}`}
                     icon={ClipboardText}
@@ -182,7 +183,7 @@ export function EquipmentDetail({ equipmentId }: { equipmentId: string }) {
               <div className="space-y-2">
                 {customer ? (
                   <RelatedRecordCard
-                    href={`/customers/${customer.id}`}
+                    href={`/customers/view/?id=${customer.id}`}
                     title={customer.name}
                     subtitle="Owner"
                     icon={UsersThree}
@@ -191,7 +192,7 @@ export function EquipmentDetail({ equipmentId }: { equipmentId: string }) {
                 ) : null}
                 {dealer && user.role === "internal" ? (
                   <RelatedRecordCard
-                    href={`/dealers/${dealer.id}`}
+                    href={`/dealers/view/?id=${dealer.id}`}
                     title={dealer.name}
                     subtitle="Supporting dealer"
                     icon={Buildings}

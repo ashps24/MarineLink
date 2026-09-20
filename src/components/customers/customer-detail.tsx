@@ -8,7 +8,6 @@ import {
   ClipboardText,
   Buildings,
   CalendarBlank,
-  PaperPlaneTilt,
 } from "@phosphor-icons/react/dist/ssr";
 import { DetailHeader } from "@/components/shared/detail-header";
 import { DetailSection } from "@/components/shared/detail-section";
@@ -20,7 +19,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { DetailSkeleton, ListSkeleton } from "@/components/shared/loading-skeleton";
 import { RestrictedState } from "@/components/shared/restricted-state";
-import { ConfirmableActionPlaceholder } from "@/components/shared/confirmable-action-placeholder";
+import { ContactButton } from "@/components/shared/contact-button";
 import { MetricCard } from "@/components/shared/metric-card";
 import { EquipmentCard } from "@/components/equipment/equipment-card";
 import { useCustomer } from "@/hooks/use-customers";
@@ -86,10 +85,11 @@ export function CustomerDetail({ customerId }: { customerId: string }) {
           </>
         }
         actions={
-          <ConfirmableActionPlaceholder
+          <ContactButton
             label="Contact account"
-            description="Messaging needs a real delivery service, which arrives with the backend."
-            icon={<PaperPlaneTilt aria-hidden="true" />}
+            email={customer.primaryContactEmail}
+            name={customer.primaryContactName}
+            subject={`MarineLink — ${customer.name}`}
           />
         }
       />
@@ -154,7 +154,7 @@ export function CustomerDetail({ customerId }: { customerId: string }) {
                 {openRequests.map((request) => (
                   <RelatedRecordCard
                     key={request.id}
-                    href={`/service/${request.id}`}
+                    href={`/service/view/?id=${request.id}`}
                     title={request.subject}
                     subtitle={`${request.referenceNumber} · updated ${formatRelativeTime(request.updatedAt)}`}
                     icon={ClipboardText}
@@ -225,7 +225,7 @@ export function CustomerDetail({ customerId }: { customerId: string }) {
                 </div>
               ) : (
                 <RelatedRecordCard
-                  href={`/dealers/${dealer.id}`}
+                  href={`/dealers/view/?id=${dealer.id}`}
                   title={dealer.name}
                   subtitle={`${dealer.region} · ${dealer.primaryContactName}`}
                   icon={Buildings}

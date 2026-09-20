@@ -1,8 +1,5 @@
-import { mockDealers } from "@/data/mock-dealers";
-import { mockCustomers } from "@/data/mock-customers";
-import { mockEquipment } from "@/data/mock-equipment";
-import { mockServiceRequests } from "@/data/mock-service-requests";
-import type { Dealer, Equipment, ServiceRequest } from "@/types";
+import type { Customer, Dealer, Equipment, ServiceRequest } from "@/types";
+import { fetchLiveDealers, fetchLiveCustomers, fetchLiveEquipment, fetchLiveServiceRequests } from "./live-source";
 import {
   visibleDealers,
   visibleCustomers,
@@ -20,7 +17,6 @@ import {
   MIN_SAMPLE_FOR_MEDIAN,
   MIN_UNITS_FOR_RATE,
 } from "@/lib/constants/time";
-import { mockRequest } from "./client";
 import type { RequestScope } from "./types";
 
 /**
@@ -72,7 +68,11 @@ export interface UnitsDownNow {
   rows: UnitDownRow[];
 }
 
-function computeUnitsDownNow(equipment: Equipment[], requests: ServiceRequest[]): UnitsDownNow {
+function computeUnitsDownNow(
+  equipment: Equipment[],
+  requests: ServiceRequest[],
+  customers: Customer[],
+): UnitsDownNow {
   const fielded = equipment.filter((e) => e.currentStatus !== "retired");
   const openFlagging = requests.filter((r) => isOpen(r) && r.unitOutOfService && r.equipmentId);
 
@@ -84,7 +84,7 @@ function computeUnitsDownNow(equipment: Equipment[], requests: ServiceRequest[])
     }
   }
 
-  const customerById = new Map(mockCustomers.map((c) => [c.id, c.name]));
+  const customerById = new Map(customers.map((c) => [c.id, c.name]));
   // Fallback for a unit whose maintenance status is not backed by an open
   // unitOutOfService request: use the most recent request touching that unit
   // at all, since that is the closest real signal for "when did this start".
@@ -448,8 +448,8 @@ export interface RepeatVisits {
 function computeRepeatVisits(
   equipment: Equipment[],
   requests: ServiceRequest[],
-  customers = mockCustomers,
-  dealers = mockDealers,
+  customers: Customer[],
+  dealers: Dealer[],
 ): RepeatVisits {
   const customerById = new Map(customers.map((c) => [c.id, c.name]));
   const dealerById = new Map(dealers.map((d) => [d.id, d.name]));
@@ -496,27 +496,32 @@ export interface ExecutiveOverview {
 }
 
 export async function getExecutiveOverview(scope: RequestScope): Promise<ExecutiveOverview | null> {
-  return mockRequest(() => {
-    // Executive KPIs are an internal-staff surface — dealer and customer
-    // dashboards use the simpler SummaryMetrics instead.
-    if (scope.role !== "internal") return null;
+  // Executive KPIs are an internal-staff surface — dealer and customer
+  // dashboards use the simpler SummaryMetrics instead.
+  if (scope.role !== "internal") return null;
 
-    const dealers = visibleDealers(scope, mockDealers);
-    visibleCustomers(scope, mockCustomers); // scoping parity; result unused directly
-    const equipment = visibleEquipment(scope, mockEquipment);
-    const requests = visibleServiceRequests(scope, mockServiceRequests);
+  const [allDealers, allCustomers, allEquipment, allRequests] = await Promise.all([
+    fetchLiveDealers(),
+    fetchLiveCustomers(),
+    fetchLiveEquipment(),
+    fetchLiveServiceRequests(),
+  ]);
 
-    return {
-      unitsDownNow: computeUnitsDownNow(equipment, requests),
-      agingOpenRequests: computeAgingOpenRequests(requests),
-      medianResolution: computeMedianResolution(requests),
-      serviceLoadIndex: computeServiceLoadIndex(equipment, requests),
-      waitingOnParts: computeWaitingOnParts(requests),
-      dealerLoad: computeDealerLoad(dealers, equipment, requests),
-      uncoveredInstalledBase: computeUncoveredInstalledBase(dealers, equipment),
-      inspectionCoverage: computeInspectionCoverage(equipment, dealers),
-      agedFleet: computeAgedFleet(equipment),
-      repeatVisits: computeRepeatVisits(equipment, requests),
-    };
-  }, null);
+  const dealers = visibleDealers(scope, allDealers);
+  const customers = visibleCustomers(scope, allCustomers);
+  const equipment = visibleEquipment(scope, allEquipment);
+  const requests = visibleServiceRequests(scope, allRequests);
+
+  return {
+    unitsDownNow: computeUnitsDownNow(equipment, requests, customers),
+    agingOpenRequests: computeAgingOpenRequests(requests),
+    medianResolution: computeMedianResolution(requests),
+    serviceLoadIndex: computeServiceLoadIndex(equipment, requests),
+    waitingOnParts: computeWaitingOnParts(requests),
+    dealerLoad: computeDealerLoad(dealers, equipment, requests),
+    uncoveredInstalledBase: computeUncoveredInstalledBase(dealers, equipment),
+    inspectionCoverage: computeInspectionCoverage(equipment, dealers),
+    agedFleet: computeAgedFleet(equipment),
+    repeatVisits: computeRepeatVisits(equipment, requests, customers, dealers),
+  };
 }

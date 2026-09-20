@@ -6,18 +6,29 @@ import { navItemsForRole } from "@/lib/constants/navigation";
 import type { UserRole } from "@/types";
 import { cn } from "@/lib/utils";
 
-/** A nav destination is current when the path is it, or sits beneath it. */
+/**
+ * A nav destination is current when the path is it, or sits beneath it.
+ * `href` may carry a "?id=..." query string (every detail-view link does,
+ * since those are query-param routes, not dynamic path segments) — only the
+ * path portion is compared, since `usePathname()` never includes the query.
+ */
 export function isActivePath(pathname: string, href: string): boolean {
-  if (href === "/") return pathname === "/";
-  return pathname === href || pathname.startsWith(`${href}/`);
+  const path = href.split("?")[0];
+  if (path === "/") return pathname === "/";
+  return pathname === path || pathname.startsWith(`${path}/`);
 }
 
 /**
  * Resolves the `/dealers/me` and `/customers/me` aliases to the signed-in
- * organization, so "My profile" points at a real record.
+ * organization's real record, as a query-param route — detail views are
+ * `/<resource>/view/?id=...`, not a dynamic path segment per id, since a
+ * real record's id is a database ROWID that cannot be enumerated at build
+ * time the way the old per-id static routes assumed.
  */
 export function resolveNavHref(href: string, organizationId: string): string {
-  return href.replace(/\/me$/, `/${organizationId}`);
+  const match = href.match(/^\/(\w+)\/me$/);
+  if (!match) return href;
+  return `/${match[1]}/view/?id=${organizationId}`;
 }
 
 export function SidebarNav({

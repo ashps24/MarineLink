@@ -169,7 +169,7 @@ export function BandOneKpis() {
               {unitsDownNow.rows.slice(0, 3).map((row) => (
                 <RelatedRecordCard
                   key={row.equipmentId}
-                  href={`/equipment/${row.equipmentId}`}
+                  href={`/equipment/view/?id=${row.equipmentId}`}
                   title={row.name}
                   subtitle={`${row.customerName ?? "Unassigned"} · ${row.daysDown}d down`}
                   icon={Wrench}

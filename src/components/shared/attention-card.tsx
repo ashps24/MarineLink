@@ -34,13 +34,13 @@ const severityConfig: Record<
 export function insightHref(insight: DashboardInsight): string {
   switch (insight.entityType) {
     case "dealer":
-      return `/dealers/${insight.entityId}`;
+      return `/dealers/view/?id=${insight.entityId}`;
     case "customer":
-      return `/customers/${insight.entityId}`;
+      return `/customers/view/?id=${insight.entityId}`;
     case "equipment":
-      return `/equipment/${insight.entityId}`;
+      return `/equipment/view/?id=${insight.entityId}`;
     case "service":
-      return `/service/${insight.entityId}`;
+      return `/service/view/?id=${insight.entityId}`;
   }
 }
 

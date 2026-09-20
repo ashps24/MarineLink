@@ -1,9 +1,6 @@
-import { mockDealers } from "@/data/mock-dealers";
-import { mockCustomers } from "@/data/mock-customers";
-import { mockEquipment } from "@/data/mock-equipment";
-import { mockServiceRequests } from "@/data/mock-service-requests";
 import { mockProducts, mockProductCategories } from "@/data/mock-products";
-import type { Dealer, Equipment, ProductCategoryId, ServiceRequest, ServiceRequestStatus } from "@/types";
+import { fetchLiveDealers, fetchLiveCustomers, fetchLiveEquipment, fetchLiveServiceRequests } from "./live-source";
+import type { Customer, Dealer, Equipment, ProductCategoryId, ServiceRequest, ServiceRequestStatus } from "@/types";
 import {
   visibleDealers,
   visibleCustomers,
@@ -12,7 +9,6 @@ import {
 } from "@/lib/permissions/visibility";
 import { appTodayMs, DAY_MS, MIN_SAMPLE_FOR_MEDIAN } from "@/lib/constants/time";
 import { serviceStatusOrder } from "@/lib/constants/status";
-import { mockRequest } from "./client";
 import type { RequestScope } from "./types";
 
 /**
@@ -93,7 +89,7 @@ export interface ActiveAccountsKpi {
   totalCustomers: number;
 }
 
-function computeActiveAccountsKpi(dealers: Dealer[], customers: typeof mockCustomers): ActiveAccountsKpi {
+function computeActiveAccountsKpi(dealers: Dealer[], customers: Customer[]): ActiveAccountsKpi {
   return {
     activeDealers: dealers.filter((d) => d.status === "active").length,
     totalDealers: dealers.length,
@@ -290,30 +286,26 @@ export interface Phase2DashboardData {
 }
 
 export async function getPhase2Dashboard(scope: RequestScope): Promise<Phase2DashboardData> {
-  return mockRequest(() => {
-    const dealers = visibleDealers(scope, mockDealers);
-    const customers = visibleCustomers(scope, mockCustomers);
-    const equipment = visibleEquipment(scope, mockEquipment);
-    const requests = visibleServiceRequests(scope, mockServiceRequests);
+  const [allDealers, allCustomers, allEquipment, allRequests] = await Promise.all([
+    fetchLiveDealers(),
+    fetchLiveCustomers(),
+    fetchLiveEquipment(),
+    fetchLiveServiceRequests(),
+  ]);
 
-    return {
-      openRequests: computeOpenRequestsKpi(requests),
-      resolutionTime: computeResolutionTimeKpi(requests),
-      activeAccounts: computeActiveAccountsKpi(dealers, customers),
-      contractedEquipment: computeContractedEquipmentKpi(equipment),
-      pipeline: computeServicePipeline(requests),
-      volumeTrend: computeServiceVolumeTrend(requests),
-      dealerHealth: scope.role === "internal" ? computeDealerHealth(dealers, equipment, requests) : [],
-      categoryBreakdown: computeEquipmentCategoryBreakdown(equipment, requests),
-    };
-  }, {
-    openRequests: { count: 0, count30dAgo: 0, change: 0 },
-    resolutionTime: { averageDays: null, medianDays: null, n: 0 },
-    activeAccounts: { activeDealers: 0, totalDealers: 0, activeCustomers: 0, totalCustomers: 0 },
-    contractedEquipment: { activeCount: 0, expiredCount: 0, fieldedTotal: 0 },
-    pipeline: [],
-    volumeTrend: [],
-    dealerHealth: [],
-    categoryBreakdown: [],
-  });
+  const dealers = visibleDealers(scope, allDealers);
+  const customers = visibleCustomers(scope, allCustomers);
+  const equipment = visibleEquipment(scope, allEquipment);
+  const requests = visibleServiceRequests(scope, allRequests);
+
+  return {
+    openRequests: computeOpenRequestsKpi(requests),
+    resolutionTime: computeResolutionTimeKpi(requests),
+    activeAccounts: computeActiveAccountsKpi(dealers, customers),
+    contractedEquipment: computeContractedEquipmentKpi(equipment),
+    pipeline: computeServicePipeline(requests),
+    volumeTrend: computeServiceVolumeTrend(requests),
+    dealerHealth: scope.role === "internal" ? computeDealerHealth(dealers, equipment, requests) : [],
+    categoryBreakdown: computeEquipmentCategoryBreakdown(equipment, requests),
+  };
 }

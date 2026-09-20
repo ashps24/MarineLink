@@ -1,13 +1,12 @@
 /**
- * Mock service layer.
+ * The application's data layer.
  *
- * Every screen reads through this module, never from `@/data` directly. When
- * the Zoho-backed services arrive, these functions are the only things that
- * change — see the mapping notes in each domain file.
+ * Every screen reads through this module. Each domain file fetches from the
+ * Catalyst Data Store via `live-source`, then applies the role and
+ * organization scoping in `lib/permissions/visibility`.
  */
 export * from "./client";
 export * from "./types";
-export * from "./users";
 export * from "./dealers";
 export * from "./customers";
 export * from "./equipment";

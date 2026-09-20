@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Manrope } from "next/font/google";
 import { AppProviders } from "@/providers/app-providers";
-import { AppShell } from "@/components/layout/app-shell";
+import { AuthGate } from "@/components/auth/auth-gate";
 import { DeepLinkResolver } from "@/components/layout/deep-link-resolver";
 import "./globals.css";
 
@@ -62,7 +62,24 @@ const bootstrapScript = `(function () {
   // fallback: /dealers/index.txt is really /dealers/.
   requested = requested.replace(/\\/index\\.txt(?=($|[?#]))/, '/');
 
-  var isDeepLink = window.location.pathname.replace(/\\/+$/, '') !== '' && isRoute(requested);
+  // Catalyst's sign-in redirect lands on /app/, the legacy Web Client path
+  // that Slate has no equivalent for. Treat it as "go to the dashboard"
+  // rather than parking a route the app does not have.
+  var isLegacyAppPath = /^\\/app(\\/|$)/.test(window.location.pathname);
+  if (isLegacyAppPath) {
+    try {
+      window.history.replaceState(null, '', '/');
+      // Marks this load as the landing after Catalyst's sign-in redirect, so
+      // the app can tell "never signed in" apart from "signed in, but the
+      // session did not reach us" instead of bouncing back to /login forever.
+      window.sessionStorage.setItem('marinelink:returned-from-signin', '1');
+    } catch (e) {}
+    requested = '/';
+  }
+
+  var isDeepLink = !isLegacyAppPath
+    && window.location.pathname.replace(/\\/+$/, '') !== ''
+    && isRoute(requested);
 
   // --- Deep links -----------------------------------------------------------
   try {
@@ -111,6 +128,30 @@ const bootstrapScript = `(function () {
   } catch (e) {}
 })();`;
 
+/**
+ * Catalyst Authentication bootstrap.
+ *
+ * Catalyst's own /__catalyst/sdk/init.js is what supplies this environment's
+ * ZAID and auth domain, and it throws immediately if the `catalyst` global is
+ * not already there — so the SDK bundle must finish executing first. Chaining
+ * the two by hand is the only way to guarantee that: a pair of tags loaded by
+ * any async mechanism can execute in either order, and the losing order
+ * leaves the app with no auth at all. Everything auth-related waits on the
+ * global rather than on this script, so loading it late is harmless.
+ */
+const CATALYST_WEB_SDK_URL = "https://static.zohocdn.com/catalyst/sdk/js/4.5.0/catalystWebSDK.js";
+
+const catalystSdkScript = `(function () {
+  var sdk = document.createElement('script');
+  sdk.src = ${JSON.stringify(CATALYST_WEB_SDK_URL)};
+  sdk.onload = function () {
+    var init = document.createElement('script');
+    init.src = '/__catalyst/sdk/init.js';
+    document.head.appendChild(init);
+  };
+  document.head.appendChild(sdk);
+})();`;
+
 export const metadata: Metadata = {
   title: {
     default: "MarineLink",
@@ -145,6 +186,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${geistSans.variable} ${geistMono.variable} ${manrope.variable}`}
     >
       <head>
+        <script dangerouslySetInnerHTML={{ __html: catalystSdkScript }} />
         {SLATE_FALLBACK_HOSTING ? (
           <script dangerouslySetInnerHTML={{ __html: bootstrapScript }} />
         ) : null}
@@ -170,7 +212,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div id="app-root">
           <AppProviders>
             <DeepLinkResolver />
-            <AppShell>{children}</AppShell>
+            <AuthGate>{children}</AuthGate>
           </AppProviders>
         </div>
       </body>

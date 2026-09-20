@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { SignOut, UserCircle, Gear } from "@phosphor-icons/react/dist/ssr";
-import { toast } from "sonner";
+import { SignOut, UserCircle } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,15 +13,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { EntityAvatar } from "@/components/shared/entity-avatar";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { useAuth } from "@/providers/auth-provider";
 
 export function UserMenu() {
   const { user } = useCurrentUser();
+  const { signOut } = useAuth();
 
   const profileHref =
     user.role === "dealer"
-      ? `/dealers/${user.organizationId}`
+      ? `/dealers/view/?id=${user.organizationId}`
       : user.role === "customer"
-        ? `/customers/${user.organizationId}`
+        ? `/customers/view/?id=${user.organizationId}`
         : null;
 
   return (
@@ -44,36 +45,23 @@ export function UserMenu() {
             {user.email}
           </span>
           <span className="mt-1.5 block truncate text-xs font-normal text-muted-foreground">
-            {user.title} · {user.organizationName}
+            {user.title ? `${user.title} · ` : ""}
+            {user.organizationName}
           </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {profileHref ? (
-          <DropdownMenuItem asChild>
-            <Link prefetch={false} href={profileHref}>
-              <UserCircle size={16} aria-hidden="true" />
-              My organization profile
-            </Link>
-          </DropdownMenuItem>
+          <>
+            <DropdownMenuItem asChild>
+              <Link prefetch={false} href={profileHref}>
+                <UserCircle size={16} aria-hidden="true" />
+                My organization profile
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
         ) : null}
-        <DropdownMenuItem
-          onSelect={() =>
-            toast("Preferences arrive with the backend", {
-              description: "Account settings need a real session to write to.",
-            })
-          }
-        >
-          <Gear size={16} aria-hidden="true" />
-          Preferences
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onSelect={() =>
-            toast("No session to sign out of", {
-              description: "This build uses a demo role selector, not authentication.",
-            })
-          }
-        >
+        <DropdownMenuItem onSelect={() => void signOut()}>
           <SignOut size={16} aria-hidden="true" />
           Sign out
         </DropdownMenuItem>

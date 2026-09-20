@@ -35,7 +35,7 @@ export function ServiceRequestRow({
       className={className}
     >
       <Link prefetch={false}
-        href={`/service/${request.id}`}
+        href={`/service/view/?id=${request.id}`}
         className={cn(
           "group block rounded-2xl border border-border bg-card p-4 transition-all",
           "hover:border-ocean/40 hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",

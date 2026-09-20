@@ -8,40 +8,35 @@ import {
   getServiceStatusBreakdown,
 } from "@/lib/mock-api";
 import { useCurrentUser } from "./use-current-user";
-import { useMockKey } from "./use-query-keys";
 
 export function useDashboardSummary() {
   const { scope } = useCurrentUser();
-  const mockKey = useMockKey();
   return useQuery({
-    queryKey: ["dashboard-summary", scope, mockKey],
+    queryKey: ["dashboard-summary", scope],
     queryFn: () => getDashboardSummary(scope),
   });
 }
 
 export function useDashboardInsights() {
   const { scope } = useCurrentUser();
-  const mockKey = useMockKey();
   return useQuery({
-    queryKey: ["dashboard-insights", scope, mockKey],
+    queryKey: ["dashboard-insights", scope],
     queryFn: () => getDashboardInsights(scope),
   });
 }
 
 export function useServiceStatusBreakdown() {
   const { scope } = useCurrentUser();
-  const mockKey = useMockKey();
   return useQuery({
-    queryKey: ["service-status-breakdown", scope, mockKey],
+    queryKey: ["service-status-breakdown", scope],
     queryFn: () => getServiceStatusBreakdown(scope),
   });
 }
 
 export function useRecentServiceActivity(limit = 5) {
   const { scope } = useCurrentUser();
-  const mockKey = useMockKey();
   return useQuery({
-    queryKey: ["recent-service-activity", scope, limit, mockKey],
+    queryKey: ["recent-service-activity", scope, limit],
     queryFn: () => getRecentServiceActivity(scope, limit),
   });
 }

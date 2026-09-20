@@ -1,7 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { ClipboardText, Eye } from "@phosphor-icons/react/dist/ssr";
+import Link from "next/link";
+import { ClipboardText, Plus } from "@phosphor-icons/react/dist/ssr";
+import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/layout/page-header";
 import { FilterBar } from "@/components/shared/filter-bar";
 import { SearchInput } from "@/components/shared/search-input";
@@ -9,19 +11,14 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { ListSkeleton } from "@/components/shared/loading-skeleton";
 import { ServiceRequestRow } from "@/components/service/service-request-row";
-import { useServiceRequests } from "@/hooks/use-service-requests";
+import { useServiceRequests, useServiceTeams } from "@/hooks/use-service-requests";
 import { useCustomers } from "@/hooks/use-customers";
 import { useDealers } from "@/hooks/use-dealers";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useFilterParams } from "@/hooks/use-filter-params";
-import { serviceTeams } from "@/lib/mock-api";
 
 const DEFAULTS = { search: "", status: "all", priority: "all", assignedTeam: "all" } as const;
 
-/**
- * Service is view-and-track only in this phase. There is deliberately no
- * create, assign, edit, or close action anywhere in this module.
- */
 export default function ServicePage() {
   const { user } = useCurrentUser();
   const { values, setValue, reset, isFiltered } = useFilterParams<Record<string, string>>({
@@ -37,7 +34,7 @@ export default function ServicePage() {
   const { data: customers } = useCustomers();
   const { data: dealers } = useDealers();
 
-  const teams = React.useMemo(() => serviceTeams(), []);
+  const { data: teams } = useServiceTeams();
   const requests = data ?? [];
 
   const customerById = React.useMemo(
@@ -65,11 +62,13 @@ export default function ServicePage() {
       <PageHeader
         title="Service"
         description="Track service requests and their current status."
-        eyebrow={
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
-            <Eye size={12} aria-hidden="true" />
-            Read-only in this phase
-          </span>
+        actions={
+          <Button asChild size="lg" className="h-10">
+            <Link prefetch={false} href="/service/new/">
+              <Plus aria-hidden="true" />
+              New request
+            </Link>
+          </Button>
         }
       />
 
@@ -119,7 +118,7 @@ export default function ServicePage() {
                   onChange: (value: string) => setValue("assignedTeam", value),
                   options: [
                     { value: "all", label: "All teams" },
-                    ...teams.map((team) => ({ value: team, label: team })),
+                    ...(teams ?? []).map((team) => ({ value: team, label: team })),
                   ],
                 },
               ]

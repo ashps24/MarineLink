@@ -35,7 +35,7 @@ export function DealerDashboard({ user }: { user: User }) {
         description={`Service activity and equipment across ${user.organizationName}.`}
         actions={
           <Button asChild variant="outline" size="lg" className="h-10">
-            <Link prefetch={false} href={`/dealers/${user.organizationId}`}>
+            <Link prefetch={false} href={`/dealers/view/?id=${user.organizationId}`}>
               <Buildings aria-hidden="true" />
               Dealer profile
               <ArrowRight aria-hidden="true" />
@@ -93,7 +93,7 @@ export function DealerDashboard({ user }: { user: User }) {
                 {accounts.map((customer) => (
                   <RelatedRecordCard
                     key={customer.id}
-                    href={`/customers/${customer.id}`}
+                    href={`/customers/view/?id=${customer.id}`}
                     title={customer.name}
                     subtitle={`${customer.equipmentCount} units · ${customer.openServiceRequestCount} open`}
                     icon={UsersThree}

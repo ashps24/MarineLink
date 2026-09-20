@@ -10,10 +10,9 @@ import { ErrorState } from "@/components/shared/error-state";
 import { CardGridSkeleton } from "@/components/shared/loading-skeleton";
 import { RestrictedState } from "@/components/shared/restricted-state";
 import { DealerCard } from "@/components/dealers/dealer-card";
-import { useDealers } from "@/hooks/use-dealers";
+import { useDealers, useDealerRegions } from "@/hooks/use-dealers";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useFilterParams } from "@/hooks/use-filter-params";
-import { dealerRegions } from "@/lib/mock-api";
 import { canViewInternalDirectories } from "@/lib/permissions/visibility";
 
 const DEFAULTS = { search: "", status: "all", region: "all" } as const;
@@ -30,7 +29,7 @@ export default function DealersPage() {
     region: values.region,
   });
 
-  const regions = React.useMemo(() => dealerRegions(), []);
+  const { data: regions } = useDealerRegions();
   const allowed = canViewInternalDirectories(user);
   const dealers = data ?? [];
 
@@ -74,7 +73,7 @@ export default function DealersPage() {
                 onChange: (value) => setValue("region", value),
                 options: [
                   { value: "all", label: "All regions" },
-                  ...regions.map((region) => ({ value: region, label: region })),
+                  ...(regions ?? []).map((region) => ({ value: region, label: region })),
                 ],
               },
             ]}

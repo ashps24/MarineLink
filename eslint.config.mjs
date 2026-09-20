@@ -21,6 +21,9 @@ const eslintConfig = [
       // Deploy artefacts, not source: the Slate chunk archive and the export.
       ".slate-static-archive/**",
       "scripts/**",
+      // A separate CommonJS Node project (Catalyst Advanced I/O function),
+      // not part of the Next.js app or its TypeScript project.
+      "functions/**",
     ],
   },
 ];

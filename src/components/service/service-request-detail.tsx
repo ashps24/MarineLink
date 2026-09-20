@@ -7,7 +7,6 @@ import {
   Users,
   CalendarBlank,
   ClockCounterClockwise,
-  Eye,
 } from "@phosphor-icons/react/dist/ssr";
 import { DetailHeader } from "@/components/shared/detail-header";
 import { DetailSection } from "@/components/shared/detail-section";
@@ -27,10 +26,7 @@ import { useDealer } from "@/hooks/use-dealers";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { formatDateTime, formatRelativeTime } from "@/lib/formatting/date";
 
-/**
- * Read-only service request. No action changes its state in this phase, and
- * the page says so rather than offering controls that would do nothing.
- */
+/** Service request detail: the reported fault, its progress, and what it is against. */
 export function ServiceRequestDetail({ requestId }: { requestId: string }) {
   const { user } = useCurrentUser();
   const { data: request, isPending, isError, refetch } = useServiceRequest(requestId);
@@ -79,12 +75,6 @@ export function ServiceRequestDetail({ requestId }: { requestId: string }) {
             </span>
           </>
         }
-        actions={
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1.5 text-xs font-medium text-muted-foreground">
-            <Eye size={12} aria-hidden="true" />
-            Read-only
-          </span>
-        }
       />
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -123,7 +113,7 @@ export function ServiceRequestDetail({ requestId }: { requestId: string }) {
             <div className="space-y-2">
               {equipment ? (
                 <RelatedRecordCard
-                  href={`/equipment/${equipment.id}`}
+                  href={`/equipment/view/?id=${equipment.id}`}
                   title={equipment.name}
                   subtitle={`${equipment.model} · serial ${equipment.serialNumber}`}
                   icon={Wrench}
@@ -132,7 +122,7 @@ export function ServiceRequestDetail({ requestId }: { requestId: string }) {
               ) : null}
               {showCustomer ? (
                 <RelatedRecordCard
-                  href={`/customers/${customer.id}`}
+                  href={`/customers/view/?id=${customer.id}`}
                   title={customer.name}
                   subtitle="Customer account"
                   icon={UsersThree}
@@ -141,7 +131,7 @@ export function ServiceRequestDetail({ requestId }: { requestId: string }) {
               ) : null}
               {showDealer ? (
                 <RelatedRecordCard
-                  href={`/dealers/${dealer.id}`}
+                  href={`/dealers/view/?id=${dealer.id}`}
                   title={dealer.name}
                   subtitle="Supporting dealer"
                   icon={Buildings}

@@ -51,7 +51,7 @@ export function DealerLoadPanel({ className }: { className?: string }) {
           {dealerLoad.rows.map((row) => (
             <Link prefetch={false}
               key={row.dealerId}
-              href={`/dealers/${row.dealerId}`}
+              href={`/dealers/view/?id=${row.dealerId}`}
               className="grid grid-cols-[1fr_auto_auto] items-center gap-3 px-5 py-3 transition-colors hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
             >
               <span className="min-w-0">
@@ -137,7 +137,7 @@ export function UncoveredBasePanel({ className }: { className?: string }) {
           {uncoveredInstalledBase.dealers.map((dealer) => (
             <Link prefetch={false}
               key={dealer.dealerId}
-              href={`/dealers/${dealer.dealerId}`}
+              href={`/dealers/view/?id=${dealer.dealerId}`}
               className="group flex items-center gap-2 rounded-lg border border-border bg-background/60 p-2.5 text-sm transition-colors hover:border-ocean/40 hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
             >
               <Wrench

@@ -51,7 +51,7 @@ export function DealerHealthChart() {
           {data.dealerHealth.map((row) => (
             <Link
               key={row.dealerId}
-              href={`/dealers/${row.dealerId}`}
+              href={`/dealers/view/?id=${row.dealerId}`}
               className="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
               prefetch={false}
             >

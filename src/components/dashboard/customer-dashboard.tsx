@@ -23,7 +23,7 @@ export function CustomerDashboard({ user }: { user: User }) {
         description={`Equipment and open service requests for ${user.organizationName}.`}
         actions={
           <Button asChild variant="outline" size="lg" className="h-10">
-            <Link prefetch={false} href={`/customers/${user.organizationId}`}>
+            <Link prefetch={false} href={`/customers/view/?id=${user.organizationId}`}>
               <UserCircle aria-hidden="true" />
               My profile
               <ArrowRight aria-hidden="true" />

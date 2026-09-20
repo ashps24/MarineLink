@@ -1,34 +1,23 @@
 /**
- * The reference "now" for every date calculation in the app.
- *
- * The fixtures describe a service year ending 18 September 2026. If metrics were
- * computed against the real clock, the whole dataset would drift into the past
- * and the dashboard would slowly fill with stale-looking work that is really
- * just old demonstration data. Pinning the reference date keeps ages, medians
- * and trends internally consistent for as long as the build exists — and the
- * dashboard says so in its header rather than passing it off as live.
- *
- * Replacing the mock layer with real services means deleting this and using the
- * real clock.
+ * "Now", for every date calculation in the app. Records come from the Data
+ * Store and move in real time, so these read the real clock.
  */
-export const APP_TODAY_ISO = "2026-09-18T17:00:00Z";
-
 export function appToday(): Date {
-  return new Date(APP_TODAY_ISO);
+  return new Date();
 }
 
 export function appTodayMs(): number {
-  return Date.parse(APP_TODAY_ISO);
+  return Date.now();
 }
 
 export const DAY_MS = 86_400_000;
 
-/** Whole days between an ISO timestamp and the reference date. */
+/** Whole days between an ISO timestamp and now. */
 export function daysSince(iso: string): number {
   return (appTodayMs() - Date.parse(iso)) / DAY_MS;
 }
 
-/** Hours between an ISO timestamp and the reference date. */
+/** Hours between an ISO timestamp and now. */
 export function hoursSince(iso: string): number {
   return (appTodayMs() - Date.parse(iso)) / 3_600_000;
 }

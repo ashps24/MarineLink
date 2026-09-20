@@ -4,14 +4,13 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "./empty-state";
 
 /**
- * Shown when the current role has no business seeing a screen or record.
- *
- * This is a UI boundary, not a security control — it models what a correctly
- * scoped backend would return once real authorization exists.
+ * Shown when the signed-in user's role has no business seeing a screen or
+ * record. Reads are scoped before they reach a screen, so this is the message
+ * for a record that scoping removed rather than a second access check.
  */
 export function RestrictedState({
   title = "Not available for this role",
-  description = "This area is limited to Marine Travelift internal staff. Switch the demo role to explore it.",
+  description = "This area is limited to Marine Travelift internal staff.",
 }: {
   title?: string;
   description?: string;

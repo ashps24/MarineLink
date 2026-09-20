@@ -9,7 +9,6 @@ import {
   Wrench,
   ClipboardText,
   CalendarBlank,
-  PaperPlaneTilt,
 } from "@phosphor-icons/react/dist/ssr";
 import { DetailHeader } from "@/components/shared/detail-header";
 import { DetailSection } from "@/components/shared/detail-section";
@@ -21,7 +20,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { DetailSkeleton, ListSkeleton } from "@/components/shared/loading-skeleton";
 import { RestrictedState } from "@/components/shared/restricted-state";
-import { ConfirmableActionPlaceholder } from "@/components/shared/confirmable-action-placeholder";
+import { ContactButton } from "@/components/shared/contact-button";
 import { MetricCard } from "@/components/shared/metric-card";
 import { EquipmentCard } from "@/components/equipment/equipment-card";
 import { useDealer } from "@/hooks/use-dealers";
@@ -95,10 +94,11 @@ export function DealerDetail({ dealerId }: { dealerId: string }) {
           </>
         }
         actions={
-          <ConfirmableActionPlaceholder
+          <ContactButton
             label="Contact dealer"
-            description="Messaging needs a real delivery service, which arrives with the backend."
-            icon={<PaperPlaneTilt aria-hidden="true" />}
+            email={dealer.primaryContactEmail}
+            name={dealer.primaryContactName}
+            subject={`MarineLink — ${dealer.name}`}
           />
         }
       />
@@ -170,7 +170,7 @@ export function DealerDetail({ dealerId }: { dealerId: string }) {
                 {openRequests.slice(0, 5).map((request) => (
                   <RelatedRecordCard
                     key={request.id}
-                    href={`/service/${request.id}`}
+                    href={`/service/view/?id=${request.id}`}
                     title={request.subject}
                     subtitle={`${request.referenceNumber} · updated ${formatRelativeTime(request.updatedAt)}`}
                     icon={ClipboardText}
@@ -230,7 +230,7 @@ export function DealerDetail({ dealerId }: { dealerId: string }) {
                 {(customers ?? []).map((customer) => (
                   <RelatedRecordCard
                     key={customer.id}
-                    href={`/customers/${customer.id}`}
+                    href={`/customers/view/?id=${customer.id}`}
                     title={customer.name}
                     subtitle={`${customer.equipmentCount} units · ${customer.openServiceRequestCount} open`}
                     icon={UsersThree}

@@ -11,12 +11,11 @@ import { CardGridSkeleton } from "@/components/shared/loading-skeleton";
 import { EquipmentCard } from "@/components/equipment/equipment-card";
 import { ProductLineBrowser } from "@/components/products/product-line-browser";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { useEquipmentList } from "@/hooks/use-equipment";
+import { useEquipmentList, useEquipmentTypes } from "@/hooks/use-equipment";
 import { useCustomers } from "@/hooks/use-customers";
 import { useDealers } from "@/hooks/use-dealers";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useFilterParams } from "@/hooks/use-filter-params";
-import { equipmentTypes } from "@/lib/mock-api";
 
 const DEFAULTS = { search: "", status: "all", equipmentType: "all" } as const;
 
@@ -40,7 +39,7 @@ export default function EquipmentPage() {
   const { data: customers } = useCustomers();
   const { data: dealers } = useDealers();
 
-  const types = React.useMemo(() => equipmentTypes(), []);
+  const { data: types } = useEquipmentTypes();
   const items = data ?? [];
 
   const customerById = React.useMemo(
@@ -116,7 +115,7 @@ export default function EquipmentPage() {
                 onChange: (value) => setValue("equipmentType", value),
                 options: [
                   { value: "all", label: "All types" },
-                  ...types.map((type) => ({ value: type, label: type })),
+                  ...(types ?? []).map((type) => ({ value: type, label: type })),
                 ],
               },
             ]}

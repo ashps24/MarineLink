@@ -56,7 +56,7 @@ export function RecentActivity({
           {requests.map((request) => (
             <RelatedRecordCard
               key={request.id}
-              href={`/service/${request.id}`}
+              href={`/service/view/?id=${request.id}`}
               title={request.subject}
               subtitle={`${request.referenceNumber} · updated ${formatRelativeTime(request.updatedAt)}`}
               icon={ClipboardText}
