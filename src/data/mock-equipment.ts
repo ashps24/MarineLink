@@ -22,6 +22,8 @@ const equipmentBase: EquipmentBase[] = [
     commissionedDate: "2018-05-10",
     location: "Travel Lift Bay 1",
     lastInspectionDate: "2026-05-12",
+    serviceContractStatus: "active",
+    serviceContractExpiresOn: "2027-05-09",
   },
   {
     id: "equip-2",
@@ -35,6 +37,8 @@ const equipmentBase: EquipmentBase[] = [
     commissionedDate: "2019-08-22",
     location: "Yard Storage Row C",
     lastInspectionDate: "2026-04-02",
+    serviceContractStatus: "active",
+    serviceContractExpiresOn: "2027-08-21",
   },
   {
     id: "equip-3",
@@ -48,6 +52,8 @@ const equipmentBase: EquipmentBase[] = [
     commissionedDate: "2016-04-03",
     location: "Main Lift Well",
     lastInspectionDate: "2026-06-18",
+    serviceContractStatus: "active",
+    serviceContractExpiresOn: "2026-11-30",
   },
   {
     id: "equip-4",
@@ -61,6 +67,8 @@ const equipmentBase: EquipmentBase[] = [
     commissionedDate: "2020-11-15",
     location: "Travel Lift Bay 2",
     lastInspectionDate: "2026-03-27",
+    serviceContractStatus: "active",
+    serviceContractExpiresOn: "2027-11-14",
   },
   {
     id: "equip-5",
@@ -74,6 +82,8 @@ const equipmentBase: EquipmentBase[] = [
     commissionedDate: "2019-02-27",
     location: "Drydock Slip A",
     lastInspectionDate: "2026-07-09",
+    serviceContractStatus: "active",
+    serviceContractExpiresOn: "2027-02-26",
   },
   {
     id: "equip-6",
@@ -87,6 +97,8 @@ const equipmentBase: EquipmentBase[] = [
     commissionedDate: "2021-06-09",
     location: "Yard Storage Row B",
     lastInspectionDate: "2026-02-14",
+    serviceContractStatus: "expired",
+    serviceContractExpiresOn: "2026-06-08",
   },
   {
     id: "equip-7",
@@ -100,6 +112,8 @@ const equipmentBase: EquipmentBase[] = [
     commissionedDate: "2014-09-30",
     location: "Heavy Lift Terminal",
     lastInspectionDate: "2025-04-21",
+    serviceContractStatus: "active",
+    serviceContractExpiresOn: "2026-12-01",
   },
   {
     id: "equip-8",
@@ -113,6 +127,8 @@ const equipmentBase: EquipmentBase[] = [
     commissionedDate: "2017-07-19",
     location: "Main Lift Well",
     lastInspectionDate: "2026-06-30",
+    serviceContractStatus: "active",
+    serviceContractExpiresOn: "2027-07-18",
   },
   {
     id: "equip-9",
@@ -126,6 +142,7 @@ const equipmentBase: EquipmentBase[] = [
     commissionedDate: "2015-05-14",
     location: "Winter Storage",
     lastInspectionDate: "2025-08-08",
+    serviceContractStatus: "none",
   },
   {
     id: "equip-10",
@@ -139,6 +156,8 @@ const equipmentBase: EquipmentBase[] = [
     commissionedDate: "2018-10-02",
     location: "Travel Lift Bay 1",
     lastInspectionDate: "2026-05-05",
+    serviceContractStatus: "active",
+    serviceContractExpiresOn: "2027-03-01",
   },
   {
     id: "equip-11",
@@ -152,6 +171,7 @@ const equipmentBase: EquipmentBase[] = [
     commissionedDate: "2010-03-18",
     location: "Decommissioned",
     lastInspectionDate: "2024-11-19",
+    serviceContractStatus: "none",
   },
   {
     id: "equip-12",
@@ -165,6 +185,8 @@ const equipmentBase: EquipmentBase[] = [
     commissionedDate: "2022-01-11",
     location: "Drydock Slip A",
     lastInspectionDate: "2026-08-01",
+    serviceContractStatus: "active",
+    serviceContractExpiresOn: "2028-01-10",
   },
   {
     id: "equip-13",
@@ -177,6 +199,8 @@ const equipmentBase: EquipmentBase[] = [
     dealerId: "dealer-4",
     commissionedDate: "2023-04-06",
     location: "Main Lift Well",
+    serviceContractStatus: "active",
+    serviceContractExpiresOn: "2028-04-05",
   },
   {
     id: "equip-14",
@@ -189,6 +213,8 @@ const equipmentBase: EquipmentBase[] = [
     dealerId: "dealer-5",
     commissionedDate: "2013-06-25",
     location: "Heavy Lift Terminal",
+    serviceContractStatus: "expired",
+    serviceContractExpiresOn: "2025-06-24",
   },
   {
     id: "equip-15",
@@ -202,6 +228,8 @@ const equipmentBase: EquipmentBase[] = [
     commissionedDate: "2019-09-12",
     location: "Main Lift Well",
     lastInspectionDate: "2026-04-28",
+    serviceContractStatus: "active",
+    serviceContractExpiresOn: "2027-09-11",
   },
 ];
 

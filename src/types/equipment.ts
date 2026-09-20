@@ -1,5 +1,7 @@
 export type EquipmentStatus = "active" | "maintenance" | "inactive" | "retired";
 
+export type ServiceContractStatus = "active" | "expired" | "none";
+
 export interface Equipment {
   id: string;
   name: string;
@@ -25,4 +27,8 @@ export interface Equipment {
    * machine is uninspected. The UI must keep those two things apart.
    */
   lastInspectionDate?: string;
+  /** Whether this unit is currently covered by a Marine Travelift service contract. */
+  serviceContractStatus: ServiceContractStatus;
+  /** Set when serviceContractStatus is "active" or "expired". */
+  serviceContractExpiresOn?: string;
 }

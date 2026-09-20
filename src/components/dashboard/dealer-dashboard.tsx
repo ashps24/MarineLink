@@ -4,11 +4,13 @@ import Link from "next/link";
 import { Buildings, UsersThree, ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@/components/ui/button";
 import { DashboardGreeting } from "./dashboard-greeting";
-import { SummaryMetrics } from "./summary-metrics";
 import { AttentionQueue } from "./attention-queue";
-import { ServiceStatusSummary } from "./service-status-summary";
 import { RecentActivity } from "./recent-activity";
 import { EquipmentPreview } from "./equipment-preview";
+import { Phase2KpiRow } from "./phase2/kpi-row";
+import { PipelineChart } from "./phase2/pipeline-chart";
+import { VolumeTrendChart } from "./phase2/volume-trend-chart";
+import { CategoryBreakdownChart } from "./phase2/category-breakdown-chart";
 import { DetailSection } from "@/components/shared/detail-section";
 import { RelatedRecordCard } from "@/components/shared/related-record-card";
 import { StatusBadge } from "@/components/shared/status-badge";
@@ -42,7 +44,14 @@ export function DealerDashboard({ user }: { user: User }) {
         }
       />
 
-      <SummaryMetrics role="dealer" />
+      <Phase2KpiRow role="dealer" />
+
+      <PipelineChart />
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <VolumeTrendChart />
+        <CategoryBreakdownChart />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
@@ -54,7 +63,6 @@ export function DealerDashboard({ user }: { user: User }) {
         </div>
 
         <div className="space-y-6">
-          <ServiceStatusSummary />
           <RecentActivity description="Latest updates on your requests" />
 
           <DetailSection

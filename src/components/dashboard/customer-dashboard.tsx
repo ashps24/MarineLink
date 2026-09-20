@@ -4,10 +4,11 @@ import Link from "next/link";
 import { UserCircle, ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@/components/ui/button";
 import { DashboardGreeting } from "./dashboard-greeting";
-import { SummaryMetrics } from "./summary-metrics";
 import { AttentionQueue } from "./attention-queue";
 import { EquipmentPreview } from "./equipment-preview";
 import { RecentActivity } from "./recent-activity";
+import { Phase2KpiRow } from "./phase2/kpi-row";
+import { PipelineChart } from "./phase2/pipeline-chart";
 import type { User } from "@/types";
 
 /**
@@ -31,7 +32,9 @@ export function CustomerDashboard({ user }: { user: User }) {
         }
       />
 
-      <SummaryMetrics role="customer" />
+      <Phase2KpiRow role="customer" />
+
+      <PipelineChart />
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">

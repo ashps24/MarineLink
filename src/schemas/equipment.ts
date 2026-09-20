@@ -22,4 +22,6 @@ export const equipmentSchema = z.object({
   location: z.string().optional(),
   imageUrl: z.string().optional(),
   lastInspectionDate: z.string().optional(),
+  serviceContractStatus: z.enum(["active", "expired", "none"]),
+  serviceContractExpiresOn: z.string().optional(),
 });
