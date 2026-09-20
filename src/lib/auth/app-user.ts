@@ -71,9 +71,18 @@ export async function resolveAppUser(identity: CatalystIdentity): Promise<User |
   return toUser(record, fallbackName);
 }
 
-/** The profile the app opens on when nobody has signed in. */
-export async function fetchDefaultAppUser(): Promise<User | null> {
-  const staff = await apiClient.list<AppUserRecord>("app-users", { userRole: "internal" });
-  const record = staff.find((row) => row.accountStatus !== "disabled");
-  return record ? toUser(record) : null;
+const ROLE_ORDER: UserRole[] = ["internal", "dealer", "customer"];
+
+/**
+ * Every provisioned profile, internal staff first. What each one can see is
+ * decided by its own role and organization, so switching between them is a
+ * real change of scope rather than a relabelled view of the same data.
+ */
+export async function fetchAppUsers(): Promise<User[]> {
+  const rows = await apiClient.list<AppUserRecord>("app-users");
+  return rows
+    .filter((row) => row.accountStatus !== "disabled")
+    .map((row) => toUser(row))
+    .filter((user): user is User => user !== null)
+    .sort((a, b) => ROLE_ORDER.indexOf(a.role) - ROLE_ORDER.indexOf(b.role));
 }

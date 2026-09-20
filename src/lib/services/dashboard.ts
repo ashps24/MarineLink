@@ -15,11 +15,12 @@ import { serviceStatusOrder } from "@/lib/constants/status";
 import { hoursSince } from "@/lib/constants/time";
 import { fetchLiveDealers, fetchLiveCustomers, fetchLiveEquipment, fetchLiveServiceRequests } from "./live-source";
 import type { RequestScope } from "./types";
+import { isOpenStatus } from "@/lib/constants/service-workflow";
 
-const OPEN_STATUSES: ServiceRequestStatus[] = ["new", "in_progress", "waiting"];
+
 
 export function isOpenRequest(request: ServiceRequest): boolean {
-  return OPEN_STATUSES.includes(request.status);
+  return isOpenStatus(request.status);
 }
 
 export async function getDashboardSummary(scope: RequestScope): Promise<DashboardSummary> {

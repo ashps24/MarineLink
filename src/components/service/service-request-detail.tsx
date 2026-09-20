@@ -19,6 +19,8 @@ import { ErrorState } from "@/components/shared/error-state";
 import { DetailSkeleton } from "@/components/shared/loading-skeleton";
 import { RestrictedState } from "@/components/shared/restricted-state";
 import { StatusTimeline } from "./status-timeline";
+import { StatusControl } from "./status-control";
+import { ActivityThread } from "./activity-thread";
 import { useServiceRequest } from "@/hooks/use-service-requests";
 import { useEquipmentItem } from "@/hooks/use-equipment";
 import { useCustomer } from "@/hooks/use-customers";
@@ -143,11 +145,22 @@ export function ServiceRequestDetail({ requestId }: { requestId: string }) {
               ) : null}
             </div>
           </DetailSection>
+
+          <DetailSection
+            title="Activity"
+            description="Status changes, handovers and comments, oldest first"
+          >
+            <ActivityThread request={request} />
+          </DetailSection>
         </div>
 
         <div className="space-y-6">
           <DetailSection title="Progress" description="Where this request sits today">
             <StatusTimeline status={request.status} />
+          </DetailSection>
+
+          <DetailSection title="Update this request" description="Move it on, or hand it over">
+            <StatusControl request={request} />
           </DetailSection>
 
           <DetailSection title="Handling">
@@ -173,10 +186,6 @@ export function ServiceRequestDetail({ requestId }: { requestId: string }) {
                 },
               ]}
             />
-            <p className="mt-4 border-t border-border pt-4 text-xs text-muted-foreground">
-              Updating, assigning, and closing requests arrive with the service backend. This
-              build tracks status only.
-            </p>
           </DetailSection>
         </div>
       </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { DetailSection } from "@/components/shared/detail-section";
 import { ErrorState } from "@/components/shared/error-state";
 import { ChartDataTable } from "@/components/charts/chart-frame";
@@ -18,11 +19,11 @@ const barClasses: Record<SemanticTone, string> = {
 };
 
 /**
- * Service pipeline: New -> In Progress -> Waiting on Parts -> Resolved (and
- * Closed once archived). A horizontal stacked bar with a per-stage count
- * beneath it — a funnel implies drop-off between exclusive stages, but a
- * request can sit in exactly one status at a time without ever "failing out",
- * so a stacked bar is the honest shape for this data.
+ * Service pipeline: New -> Acknowledged -> In Progress -> Awaiting Parts ->
+ * Resolved -> Closed. A horizontal stacked bar with a per-stage count beneath
+ * it — a funnel implies drop-off between exclusive stages, but a request sits
+ * in exactly one status at a time without ever "failing out", so a stacked
+ * bar is the honest shape. Each stage opens the queue filtered to it.
  */
 export function PipelineChart() {
   const { data, isPending, isError, refetch } = usePhase2Dashboard();
@@ -38,7 +39,7 @@ export function PipelineChart() {
             Loading service pipeline
           </span>
           <Skeleton className="h-3 w-full rounded-full" />
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
             {Array.from({ length: 5 }).map((_, i) => (
               <Skeleton key={i} className="h-10 w-full" />
             ))}
@@ -78,11 +79,16 @@ export function PipelineChart() {
               })}
           </div>
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
             {data.pipeline.map((stage) => {
               const config = serviceStatusConfig[stage.status];
               return (
-                <div key={stage.status} className="rounded-xl border border-border p-3">
+                <Link
+                  prefetch={false}
+                  key={stage.status}
+                  href={`/service?status=${stage.status}`}
+                  className="block rounded-xl border border-border p-3 transition-colors hover:border-ocean/40 hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                >
                   <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <span
                       aria-hidden="true"
@@ -93,7 +99,7 @@ export function PipelineChart() {
                   <p className="mt-1.5 font-heading text-xl font-semibold tabular-nums text-foreground">
                     {stage.count}
                   </p>
-                </div>
+                </Link>
               );
             })}
           </div>

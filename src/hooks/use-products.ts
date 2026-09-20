@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getProductCategories, getProducts } from "@/lib/mock-api";
+import { getProductCategories, getProducts } from "@/lib/services";
 
 export function useProductCategories() {
   return useQuery({

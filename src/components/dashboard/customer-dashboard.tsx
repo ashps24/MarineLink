@@ -7,7 +7,7 @@ import { DashboardGreeting } from "./dashboard-greeting";
 import { AttentionQueue } from "./attention-queue";
 import { EquipmentPreview } from "./equipment-preview";
 import { RecentActivity } from "./recent-activity";
-import { Phase2KpiRow } from "./phase2/kpi-row";
+import { ServicePerformance } from "./phase2/service-performance";
 import { PipelineChart } from "./phase2/pipeline-chart";
 import type { User } from "@/types";
 
@@ -32,7 +32,7 @@ export function CustomerDashboard({ user }: { user: User }) {
         }
       />
 
-      <Phase2KpiRow role="customer" />
+      <ServicePerformance role="customer" />
 
       <PipelineChart />
 

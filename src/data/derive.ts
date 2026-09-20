@@ -1,4 +1,5 @@
 import type { Equipment, ServiceRequest } from "@/types";
+import { isOpenStatus } from "@/lib/constants/service-workflow";
 
 /**
  * The counts carried on dealer and customer records are denormalised — a real
@@ -8,10 +9,10 @@ import type { Equipment, ServiceRequest } from "@/types";
  * matters once the service history is large enough that nobody can check by eye.
  */
 
-const OPEN_STATUSES: ServiceRequest["status"][] = ["new", "in_progress", "waiting"];
+
 
 export function isOpen(request: ServiceRequest): boolean {
-  return OPEN_STATUSES.includes(request.status);
+  return isOpenStatus(request.status);
 }
 
 export function countEquipmentForCustomer(equipment: Equipment[], customerId: string): number {

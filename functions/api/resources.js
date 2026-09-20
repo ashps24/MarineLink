@@ -85,12 +85,40 @@ const RESOURCES = {
       summary: 'Summary',
       kind: 'Kind',
       unitOutOfService: 'UnitOutOfService',
+      // When the request was actually raised, as distinct from when the row
+      // was written. Seeded history has a raised date far older than its
+      // insert time, and every age, ageing and resolution figure has to be
+      // measured from the former.
+      raisedAt: 'RaisedAt',
       statusChangedAt: 'StatusChangedAt',
       resolvedAt: 'ResolvedAt',
       partsEtaDate: 'PartsEtaDate',
     },
     booleanFields: ['unitOutOfService'],
-    datetimeFields: ['statusChangedAt', 'resolvedAt'],
+    datetimeFields: ['raisedAt', 'statusChangedAt', 'resolvedAt'],
+  },
+
+  /**
+   * Every state change a request has been through, plus the conversation
+   * around it. Status history, reassignment and comments share one table
+   * because they share one timeline: a reader wants them interleaved, and
+   * splitting them would mean merging them back on every read.
+   */
+  'service-events': {
+    table: 'ServiceEvents',
+    fields: {
+      requestId: 'RequestId',
+      eventKind: 'EventKind',
+      fromValue: 'FromValue',
+      toValue: 'ToValue',
+      note: 'Note',
+      actorName: 'ActorName',
+      actorRole: 'ActorRole',
+      actorEmail: 'ActorEmail',
+      occurredAt: 'OccurredAt',
+    },
+    booleanFields: [],
+    datetimeFields: ['occurredAt'],
   },
 
   /**

@@ -3,7 +3,7 @@
 import { DashboardGreeting } from "./dashboard-greeting";
 import { AttentionQueue } from "./attention-queue";
 import { RecentActivity } from "./recent-activity";
-import { Phase2KpiRow } from "./phase2/kpi-row";
+import { ServicePerformance } from "./phase2/service-performance";
 import { PipelineChart } from "./phase2/pipeline-chart";
 import { VolumeTrendChart } from "./phase2/volume-trend-chart";
 import { CategoryBreakdownChart } from "./phase2/category-breakdown-chart";
@@ -25,7 +25,7 @@ export function InternalDashboard({ user }: { user: User }) {
         description="Service load, dealer network health, and the records that need a decision today."
       />
 
-      <Phase2KpiRow role="internal" />
+      <ServicePerformance role="internal" />
 
       <PipelineChart />
 

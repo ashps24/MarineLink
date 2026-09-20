@@ -3,22 +3,43 @@
 import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getCatalystIdentity, signOutOfCatalyst } from "@/lib/auth/catalyst-session";
-import { resolveAppUser, fetchDefaultAppUser } from "@/lib/auth/app-user";
+import { resolveAppUser, fetchAppUsers } from "@/lib/auth/app-user";
 import type { User } from "@/types";
 
 export type AuthState =
   | { status: "loading" }
-  /** `authenticated` false means the app opened on the default staff profile. */
-  | { status: "ready"; user: User; authenticated: boolean }
+  /** `authenticated` false means the app opened on a provisioned profile. */
+  | { status: "ready"; user: User; authenticated: boolean; profiles: User[] }
   | { status: "unavailable"; message: string };
 
 interface AuthContextValue {
   state: AuthState;
   refresh: () => Promise<void>;
   signOut: () => Promise<void>;
+  /** Switch which provisioned profile the app is viewed as. */
+  setProfile: (userId: string) => void;
 }
 
 const AuthContext = React.createContext<AuthContextValue | null>(null);
+
+const ACTIVE_PROFILE_KEY = "marinelink.active-profile";
+
+function readStoredProfileId(): string | null {
+  try {
+    return window.localStorage.getItem(ACTIVE_PROFILE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function storeProfileId(id: string): void {
+  try {
+    window.localStorage.setItem(ACTIVE_PROFILE_KEY, id);
+  } catch {
+    // A browser that refuses storage still gets a working session, it just
+    // starts from the default profile on the next load.
+  }
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = React.useState<AuthState>({ status: "loading" });
@@ -26,25 +47,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const load = React.useCallback(async () => {
     try {
-      // A Catalyst session wins when there is one, and the app opens on the
-      // internal-staff profile when there is not. Signing in is optional
-      // here, so a missing session is an ordinary state, not a failure.
-      const identity = await getCatalystIdentity().catch(() => null);
-      const signedIn = identity ? await resolveAppUser(identity) : null;
-      if (signedIn) {
-        setState({ status: "ready", user: signedIn, authenticated: true });
-        return;
-      }
-
-      const fallback = await fetchDefaultAppUser();
-      if (!fallback) {
+      const profiles = await fetchAppUsers();
+      if (profiles.length === 0) {
         setState({
           status: "unavailable",
           message: "No MarineLink profile is configured for this workspace yet.",
         });
         return;
       }
-      setState({ status: "ready", user: fallback, authenticated: false });
+
+      // A real Catalyst session pins the profile to that person. Without one,
+      // the app opens on whichever profile was last chosen here.
+      const identity = await getCatalystIdentity().catch(() => null);
+      const signedIn = identity ? await resolveAppUser(identity) : null;
+      if (signedIn) {
+        setState({ status: "ready", user: signedIn, authenticated: true, profiles });
+        return;
+      }
+
+      const storedId = readStoredProfileId();
+      const user = profiles.find((p) => p.id === storedId) ?? profiles[0];
+      setState({ status: "ready", user, authenticated: false, profiles });
     } catch (error) {
       setState({
         status: "unavailable",
@@ -57,16 +80,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     void load();
   }, [load]);
 
+  /**
+   * Switching profile reloads rather than re-rendering in place.
+   *
+   * Role decides the navigation set, which dashboard mounts, and the scope on
+   * every query, so a switch replaces essentially the whole tree at once.
+   * Doing that as a client transition crashed the router mid-swap; a reload
+   * remounts cleanly and costs a second on an action taken a few times a
+   * session. The choice is already persisted, so the new profile is in place
+   * on the way back up.
+   */
+  const setProfile = React.useCallback(
+    (userId: string) => {
+      if (state.status !== "ready" || state.authenticated) return;
+      const user = state.profiles.find((profile) => profile.id === userId);
+      if (!user || user.id === state.user.id) return;
+      storeProfileId(user.id);
+      window.location.assign("/");
+    },
+    [state],
+  );
+
   const signOut = React.useCallback(async () => {
-    // Every cached response was fetched for the outgoing user's scope, so it
-    // must not survive into whatever the app resolves to next.
     queryClient.clear();
     await signOutOfCatalyst();
   }, [queryClient]);
 
   const value = React.useMemo<AuthContextValue>(
-    () => ({ state, refresh: load, signOut }),
-    [state, load, signOut],
+    () => ({ state, refresh: load, signOut, setProfile }),
+    [state, load, signOut, setProfile],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

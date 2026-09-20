@@ -1,5 +1,6 @@
 export type ServiceRequestStatus =
   | "new"
+  | "acknowledged"
   | "in_progress"
   | "waiting"
   | "resolved"

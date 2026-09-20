@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useAuthenticatedUser } from "@/providers/auth-provider";
-import type { RequestScope } from "@/lib/mock-api";
+import type { RequestScope } from "@/lib/services";
 import type { User } from "@/types";
 
 /**

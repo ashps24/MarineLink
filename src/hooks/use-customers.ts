@@ -1,8 +1,8 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getCustomers, getCustomerById } from "@/lib/mock-api";
-import type { CustomerFilters } from "@/lib/mock-api";
+import { getCustomers, getCustomerById } from "@/lib/services";
+import type { CustomerFilters } from "@/lib/services";
 import { useCurrentUser } from "./use-current-user";
 
 export function useCustomers(filters: CustomerFilters = {}) {

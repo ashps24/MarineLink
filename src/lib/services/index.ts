@@ -15,3 +15,4 @@ export * from "./dashboard";
 export * from "./executive";
 export * from "./products";
 export * from "./phase2-dashboard";
+export * from "./service-events";

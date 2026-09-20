@@ -29,8 +29,9 @@ export const equipmentStatusConfig: Record<EquipmentStatus, { label: string; ton
 
 export const serviceStatusConfig: Record<ServiceRequestStatus, { label: string; tone: SemanticTone }> = {
   new: { label: "New", tone: "info" },
+  acknowledged: { label: "Acknowledged", tone: "info" },
   in_progress: { label: "In Progress", tone: "info" },
-  waiting: { label: "Waiting on Parts", tone: "warning" },
+  waiting: { label: "Awaiting Parts", tone: "warning" },
   resolved: { label: "Resolved", tone: "success" },
   closed: { label: "Closed", tone: "neutral" },
 };
@@ -44,6 +45,7 @@ export const servicePriorityConfig: Record<ServiceRequestPriority, { label: stri
 
 export const serviceStatusOrder: ServiceRequestStatus[] = [
   "new",
+  "acknowledged",
   "in_progress",
   "waiting",
   "resolved",

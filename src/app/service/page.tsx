@@ -90,8 +90,9 @@ export default function ServicePage() {
             options: [
               { value: "all", label: "All statuses" },
               { value: "new", label: "New" },
+              { value: "acknowledged", label: "Acknowledged" },
               { value: "in_progress", label: "In progress" },
-              { value: "waiting", label: "Waiting on parts" },
+              { value: "waiting", label: "Awaiting parts" },
               { value: "resolved", label: "Resolved" },
               { value: "closed", label: "Closed" },
             ],

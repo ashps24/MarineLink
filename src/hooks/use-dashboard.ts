@@ -6,7 +6,7 @@ import {
   getDashboardSummary,
   getRecentServiceActivity,
   getServiceStatusBreakdown,
-} from "@/lib/mock-api";
+} from "@/lib/services";
 import { useCurrentUser } from "./use-current-user";
 
 export function useDashboardSummary() {

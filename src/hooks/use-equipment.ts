@@ -1,8 +1,8 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getEquipment, getEquipmentById, equipmentTypes } from "@/lib/mock-api";
-import type { EquipmentFilters } from "@/lib/mock-api";
+import { getEquipment, getEquipmentById, equipmentTypes } from "@/lib/services";
+import type { EquipmentFilters } from "@/lib/services";
 import { useCurrentUser } from "./use-current-user";
 
 export function useEquipmentList(filters: EquipmentFilters = {}) {

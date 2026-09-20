@@ -1,6 +1,6 @@
 /**
  * Client for the real Catalyst backend (the Advanced I/O function in
- * functions/api). This is the seam the mock-api layer's read functions now
+ * functions/api). This is the seam the data layer's read functions now
  * call through instead of reading the static @/data fixtures directly.
  *
  * The base URL is build-time only (Slate is a static export — there is no

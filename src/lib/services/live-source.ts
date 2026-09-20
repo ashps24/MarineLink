@@ -1,6 +1,7 @@
 import { apiClient } from "@/lib/api/client";
 import { dealerSchema, customerSchema, equipmentSchema, serviceRequestSchema } from "@/schemas";
 import type { Dealer, Customer, Equipment, ServiceRequest } from "@/types";
+import { isOpenStatus } from "@/lib/constants/service-workflow";
 
 /**
  * Fetches every entity from the real Catalyst backend and derives the
@@ -15,7 +16,7 @@ import type { Dealer, Customer, Equipment, ServiceRequest } from "@/types";
  * and keeps this a single round trip per resource instead of one per row.
  */
 
-const OPEN_STATUSES: ServiceRequest["status"][] = ["new", "in_progress", "waiting"];
+
 
 /** null (the API's "no value") -> undefined (what the Zod .optional() schemas expect). */
 function nullsToUndefined<T extends Record<string, unknown>>(row: T): T {
@@ -54,7 +55,16 @@ function loadTables(): Promise<LiveTables> {
       apiClient.list<Record<string, unknown>>("service-requests"),
     ]);
 
-    const serviceRequests = requestRows.map((row) => serviceRequestSchema.parse(nullsToUndefined(row)));
+    // A request's "created" date, for every age, ageing and resolution
+    // figure in the app, is when it was raised — not when its row happened to
+    // be written. Seeded history was inserted long after the work it
+    // describes, so reading CREATEDTIME here would make every request look
+    // hours old and every resolution time come out negative.
+    const serviceRequests = requestRows.map((row) => {
+      const base = nullsToUndefined(row);
+      const raisedAt = base.raisedAt as string | undefined;
+      return serviceRequestSchema.parse({ ...base, createdAt: raisedAt ?? base.createdAt });
+    });
 
     const equipment = equipmentRows.map((row) => equipmentSchema.parse(nullsToUndefined(row)));
 
@@ -64,7 +74,7 @@ function loadTables(): Promise<LiveTables> {
         ...base,
         equipmentCount: equipment.filter((e) => e.customerId === base.id).length,
         openServiceRequestCount: serviceRequests.filter(
-          (r) => r.customerId === base.id && OPEN_STATUSES.includes(r.status),
+          (r) => r.customerId === base.id && isOpenStatus(r.status),
         ).length,
       });
     });
@@ -76,7 +86,7 @@ function loadTables(): Promise<LiveTables> {
         customerCount: customers.filter((c) => c.dealerId === base.id).length,
         equipmentCount: equipment.filter((e) => e.dealerId === base.id).length,
         openServiceRequestCount: serviceRequests.filter(
-          (r) => r.dealerId === base.id && OPEN_STATUSES.includes(r.status),
+          (r) => r.dealerId === base.id && isOpenStatus(r.status),
         ).length,
       });
     });

@@ -18,6 +18,7 @@ import {
   MIN_UNITS_FOR_RATE,
 } from "@/lib/constants/time";
 import type { RequestScope } from "./types";
+import { isOpenStatus } from "@/lib/constants/service-workflow";
 
 /**
  * Executive-level KPIs for the internal dashboard.
@@ -34,8 +35,7 @@ import type { RequestScope } from "./types";
  * against yet. That decision is revisited once these become real endpoints.
  */
 
-const OPEN_STATUSES: ServiceRequest["status"][] = ["new", "in_progress", "waiting"];
-const isOpen = (r: ServiceRequest) => OPEN_STATUSES.includes(r.status);
+const isOpen = (r: ServiceRequest) => isOpenStatus(r.status);
 
 function median(values: number[]): number | null {
   if (values.length === 0) return null;

@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const serviceRequestStatusSchema = z.enum([
   "new",
+  "acknowledged",
   "in_progress",
   "waiting",
   "resolved",

@@ -53,11 +53,46 @@ function convertBooleanFields(row, booleanColumns) {
   return result;
 }
 
-/** `datetime` columns want 'YYYY-MM-DD HH:mm:ss' — never a raw ISO string. */
+/**
+ * Data Store datetimes carry no zone. Every one of them — the CREATEDTIME and
+ * MODIFIEDTIME the platform stamps as much as the columns this API writes —
+ * is wall time in the project's own timezone, so a value has to be converted
+ * on the way in and back on the way out. Reading one as-is is what makes a
+ * record written moments ago read as hours old in a browser elsewhere.
+ *
+ * Asia/Kolkata observes no daylight saving, so a fixed offset is exact rather
+ * than an approximation and needs no timezone database at runtime.
+ */
+const PROJECT_UTC_OFFSET_MINUTES = 330;
+
+/** An instant -> 'YYYY-MM-DD HH:mm:ss' wall time in the project timezone. */
 function toDatastoreDatetime(isoOrDate) {
   if (!isoOrDate) return null;
   const date = typeof isoOrDate === 'string' ? new Date(isoOrDate) : isoOrDate;
-  return date.toISOString().slice(0, 19).replace('T', ' ');
+  if (Number.isNaN(date.getTime())) return null;
+  const wallTime = new Date(date.getTime() + PROJECT_UTC_OFFSET_MINUTES * 60000);
+  return wallTime.toISOString().slice(0, 19).replace('T', ' ');
 }
 
-module.exports = { getAllRows, getRowsWhere, convertBooleanFields, toDatastoreDatetime };
+const DATASTORE_DATETIME =
+  /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})(?::(\d{1,3}))?$/;
+
+/** Project-timezone wall time -> a real ISO-8601 instant in UTC. */
+function fromDatastoreDatetime(value) {
+  if (!value) return null;
+  const match = DATASTORE_DATETIME.exec(String(value).trim());
+  if (!match) return value;
+  const [, year, month, day, hour, minute, second, ms] = match;
+  const utcMs =
+    Date.UTC(+year, +month - 1, +day, +hour, +minute, +second, ms ? +ms : 0) -
+    PROJECT_UTC_OFFSET_MINUTES * 60000;
+  return new Date(utcMs).toISOString();
+}
+
+module.exports = {
+  getAllRows,
+  getRowsWhere,
+  convertBooleanFields,
+  toDatastoreDatetime,
+  fromDatastoreDatetime,
+};

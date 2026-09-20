@@ -4,12 +4,18 @@ import type { ServiceRequestStatus } from "@/types";
 import { cn } from "@/lib/utils";
 
 /**
- * Read-only progress indicator for a request.
+ * Progress indicator for a request.
  *
- * "Waiting" is a hold on the in-progress step rather than a stage of its own,
- * so the track stays linear and easy to read.
+ * "Awaiting parts" is a hold on the in-progress step rather than a stage of
+ * its own, so the track stays linear and easy to read.
  */
-const TRACK: ServiceRequestStatus[] = ["new", "in_progress", "resolved", "closed"];
+const TRACK: ServiceRequestStatus[] = [
+  "new",
+  "acknowledged",
+  "in_progress",
+  "resolved",
+  "closed",
+];
 
 export function StatusTimeline({ status }: { status: ServiceRequestStatus }) {
   const waiting = status === "waiting";

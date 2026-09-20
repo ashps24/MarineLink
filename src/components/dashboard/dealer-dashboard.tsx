@@ -7,7 +7,7 @@ import { DashboardGreeting } from "./dashboard-greeting";
 import { AttentionQueue } from "./attention-queue";
 import { RecentActivity } from "./recent-activity";
 import { EquipmentPreview } from "./equipment-preview";
-import { Phase2KpiRow } from "./phase2/kpi-row";
+import { ServicePerformance } from "./phase2/service-performance";
 import { PipelineChart } from "./phase2/pipeline-chart";
 import { VolumeTrendChart } from "./phase2/volume-trend-chart";
 import { CategoryBreakdownChart } from "./phase2/category-breakdown-chart";
@@ -44,7 +44,7 @@ export function DealerDashboard({ user }: { user: User }) {
         }
       />
 
-      <Phase2KpiRow role="dealer" />
+      <ServicePerformance role="dealer" />
 
       <PipelineChart />
 

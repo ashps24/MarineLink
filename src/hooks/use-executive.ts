@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getExecutiveOverview } from "@/lib/mock-api";
+import { getExecutiveOverview } from "@/lib/services";
 import { useCurrentUser } from "./use-current-user";
 
 export function useExecutiveOverview() {

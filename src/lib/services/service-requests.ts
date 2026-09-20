@@ -119,11 +119,11 @@ export async function createServiceRequest(
     summary: input.summary,
     kind: input.kind,
     unitOutOfService: input.unitOutOfService,
+    raisedAt: now,
     statusChangedAt: now,
   });
 
   invalidateLiveCache();
-  return serviceRequestSchema.parse(
-    Object.fromEntries(Object.entries(created).filter(([, value]) => value !== null)),
-  );
+  const clean = Object.fromEntries(Object.entries(created).filter(([, value]) => value !== null));
+  return serviceRequestSchema.parse({ ...clean, createdAt: clean.raisedAt ?? clean.createdAt });
 }

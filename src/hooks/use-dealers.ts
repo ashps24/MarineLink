@@ -1,8 +1,8 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getDealers, getDealerById, dealerRegions } from "@/lib/mock-api";
-import type { DealerFilters } from "@/lib/mock-api";
+import { getDealers, getDealerById, dealerRegions } from "@/lib/services";
+import type { DealerFilters } from "@/lib/services";
 import { useCurrentUser } from "./use-current-user";
 
 export function useDealers(filters: DealerFilters = {}) {

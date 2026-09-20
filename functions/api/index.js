@@ -2,7 +2,13 @@
 
 const express = require('express');
 const catalyst = require('zcatalyst-sdk-node');
-const { getAllRows, getRowsWhere, convertBooleanFields, toDatastoreDatetime } = require('./datastore-helpers');
+const {
+  getAllRows,
+  getRowsWhere,
+  convertBooleanFields,
+  toDatastoreDatetime,
+  fromDatastoreDatetime,
+} = require('./datastore-helpers');
 const { RESOURCES } = require('./resources');
 
 const app = express();
@@ -48,10 +54,19 @@ app.use((req, res, next) => {
 /** DB row (PascalCase columns, system fields) -> API shape (camelCase, id/createdAt/updatedAt). */
 function rowToApi(resourceKey, row) {
   const config = RESOURCES[resourceKey];
-  const out = { id: String(row.ROWID), createdAt: row.CREATEDTIME, updatedAt: row.MODIFIEDTIME };
+  const out = {
+    id: String(row.ROWID),
+    createdAt: fromDatastoreDatetime(row.CREATEDTIME),
+    updatedAt: fromDatastoreDatetime(row.MODIFIEDTIME),
+  };
   for (const [apiField, column] of Object.entries(config.fields)) {
     const value = row[column];
-    out[apiField] = value === undefined || value === '' ? null : value;
+    const empty = value === undefined || value === '' || value === null;
+    out[apiField] = empty
+      ? null
+      : config.datetimeFields.includes(apiField)
+        ? fromDatastoreDatetime(value)
+        : value;
   }
   return convertBooleanFields(out, config.booleanFields);
 }
@@ -64,9 +79,15 @@ function apiToRow(resourceKey, payload) {
     if (!(apiField in payload)) continue;
     let value = payload[apiField];
     if (config.booleanFields.includes(apiField)) {
-      value = value === true || value === 'true' ? 'true' : 'false';
-    } else if (config.datetimeFields.includes(apiField) && value) {
-      value = toDatastoreDatetime(value);
+      row[column] = value === true || value === 'true' ? 'true' : 'false';
+      continue;
+    }
+    if (config.datetimeFields.includes(apiField)) {
+      // A datetime column rejects '' outright ("datetime value expected"),
+      // so clearing one — reopening a resolved request, say — has to send
+      // null rather than the empty string every other column type takes.
+      row[column] = value ? toDatastoreDatetime(value) : null;
+      continue;
     }
     row[column] = value === null ? '' : value;
   }

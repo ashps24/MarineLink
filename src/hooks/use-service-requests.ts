@@ -6,8 +6,13 @@ import {
   getServiceRequestById,
   serviceTeams,
   createServiceRequest,
-} from "@/lib/mock-api";
-import type { ServiceRequestFilters, NewServiceRequestInput } from "@/lib/mock-api";
+  getServiceEvents,
+  changeServiceRequestStatus,
+  reassignServiceRequest,
+  addServiceComment,
+} from "@/lib/services";
+import type { ServiceRequestFilters, NewServiceRequestInput } from "@/lib/services";
+import type { ServiceRequest, ServiceRequestStatus } from "@/types";
 import { useCurrentUser } from "./use-current-user";
 
 export function useServiceRequests(filters: ServiceRequestFilters = {}) {
@@ -48,4 +53,58 @@ export function useCreateServiceRequest() {
     mutationFn: (input: NewServiceRequestInput) => createServiceRequest(scope, input),
     onSuccess: () => queryClient.invalidateQueries(),
   });
+}
+
+export function useServiceEvents(requestId: string | undefined) {
+  return useQuery({
+    queryKey: ["service-events", requestId],
+    queryFn: () => getServiceEvents(requestId as string),
+    enabled: Boolean(requestId),
+  });
+}
+
+/**
+ * The three ways a request changes after it is raised. Each invalidates the
+ * whole cache for the same reason a new request does: a status move shifts
+ * the pipeline, the KPI tiles, the attention queue and the dealer's numbers,
+ * none of which live in the query being mutated.
+ */
+export function useServiceRequestActions() {
+  const { user } = useCurrentUser();
+  const queryClient = useQueryClient();
+  const settle = () => queryClient.invalidateQueries();
+
+  const changeStatus = useMutation({
+    mutationFn: ({
+      request,
+      toStatus,
+      note,
+    }: {
+      request: ServiceRequest;
+      toStatus: ServiceRequestStatus;
+      note?: string;
+    }) => changeServiceRequestStatus(user, request, toStatus, note),
+    onSuccess: settle,
+  });
+
+  const reassign = useMutation({
+    mutationFn: ({
+      request,
+      toTeam,
+      note,
+    }: {
+      request: ServiceRequest;
+      toTeam: string;
+      note?: string;
+    }) => reassignServiceRequest(user, request, toTeam, note),
+    onSuccess: settle,
+  });
+
+  const comment = useMutation({
+    mutationFn: ({ requestId, note }: { requestId: string; note: string }) =>
+      addServiceComment(user, requestId, note),
+    onSuccess: settle,
+  });
+
+  return { changeStatus, reassign, comment };
 }
