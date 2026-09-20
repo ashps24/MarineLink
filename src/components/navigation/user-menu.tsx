@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { SignOut, UserCircle } from "@phosphor-icons/react/dist/ssr";
+import { SignIn, SignOut, UserCircle } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,7 +17,8 @@ import { useAuth } from "@/providers/auth-provider";
 
 export function UserMenu() {
   const { user } = useCurrentUser();
-  const { signOut } = useAuth();
+  const { state, signOut } = useAuth();
+  const authenticated = state.status === "ready" && state.authenticated;
 
   const profileHref =
     user.role === "dealer"
@@ -61,10 +62,19 @@ export function UserMenu() {
             <DropdownMenuSeparator />
           </>
         ) : null}
-        <DropdownMenuItem onSelect={() => void signOut()}>
-          <SignOut size={16} aria-hidden="true" />
-          Sign out
-        </DropdownMenuItem>
+        {authenticated ? (
+          <DropdownMenuItem onSelect={() => void signOut()}>
+            <SignOut size={16} aria-hidden="true" />
+            Sign out
+          </DropdownMenuItem>
+        ) : (
+          <DropdownMenuItem asChild>
+            <Link prefetch={false} href="/login/">
+              <SignIn size={16} aria-hidden="true" />
+              Sign in
+            </Link>
+          </DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

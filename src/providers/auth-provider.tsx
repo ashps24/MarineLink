@@ -3,15 +3,13 @@
 import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getCatalystIdentity, signOutOfCatalyst } from "@/lib/auth/catalyst-session";
-import { resolveAppUser } from "@/lib/auth/app-user";
+import { resolveAppUser, fetchDefaultAppUser } from "@/lib/auth/app-user";
 import type { User } from "@/types";
 
 export type AuthState =
   | { status: "loading" }
-  | { status: "signed-out" }
-  /** Authenticated with Catalyst, but no MarineLink access has been granted. */
-  | { status: "no-access"; email: string; reason: "not-provisioned" | "disabled" }
-  | { status: "signed-in"; user: User }
+  /** `authenticated` false means the app opened on the default staff profile. */
+  | { status: "ready"; user: User; authenticated: boolean }
   | { status: "unavailable"; message: string };
 
 interface AuthContextValue {
@@ -28,22 +26,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const load = React.useCallback(async () => {
     try {
-      const identity = await getCatalystIdentity();
-      if (!identity) {
-        setState({ status: "signed-out" });
+      // A Catalyst session wins when there is one, and the app opens on the
+      // internal-staff profile when there is not. Signing in is optional
+      // here, so a missing session is an ordinary state, not a failure.
+      const identity = await getCatalystIdentity().catch(() => null);
+      const signedIn = identity ? await resolveAppUser(identity) : null;
+      if (signedIn) {
+        setState({ status: "ready", user: signedIn, authenticated: true });
         return;
       }
 
-      const decision = await resolveAppUser(identity);
-      setState(
-        decision.status === "granted"
-          ? { status: "signed-in", user: decision.user }
-          : { status: "no-access", email: decision.email, reason: decision.status },
-      );
+      const fallback = await fetchDefaultAppUser();
+      if (!fallback) {
+        setState({
+          status: "unavailable",
+          message: "No MarineLink profile is configured for this workspace yet.",
+        });
+        return;
+      }
+      setState({ status: "ready", user: fallback, authenticated: false });
     } catch (error) {
       setState({
         status: "unavailable",
-        message: error instanceof Error ? error.message : "Sign-in is unavailable.",
+        message: error instanceof Error ? error.message : "MarineLink could not start.",
       });
     }
   }, []);
@@ -53,8 +58,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [load]);
 
   const signOut = React.useCallback(async () => {
-    // Every cached list and detail response was fetched for the outgoing
-    // user's scope, so it must not survive into the next session.
+    // Every cached response was fetched for the outgoing user's scope, so it
+    // must not survive into whatever the app resolves to next.
     queryClient.clear();
     await signOutOfCatalyst();
   }, [queryClient]);
@@ -74,14 +79,14 @@ export function useAuth(): AuthContextValue {
 }
 
 /**
- * The signed-in user, for the screens that only ever render behind the auth
- * gate. Those screens cannot be reached in any other state, so this throws
- * rather than making every consumer handle a null user.
+ * The active user, for screens that only render once a profile has resolved.
+ * Those screens cannot be reached in any other state, so this throws rather
+ * than making every consumer handle a null user.
  */
 export function useAuthenticatedUser(): User {
   const { state } = useAuth();
-  if (state.status !== "signed-in") {
-    throw new Error("useAuthenticatedUser called outside an authenticated screen");
+  if (state.status !== "ready") {
+    throw new Error("useAuthenticatedUser called before a profile resolved");
   }
   return state.user;
 }

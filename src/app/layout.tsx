@@ -69,10 +69,6 @@ const bootstrapScript = `(function () {
   if (isLegacyAppPath) {
     try {
       window.history.replaceState(null, '', '/');
-      // Marks this load as the landing after Catalyst's sign-in redirect, so
-      // the app can tell "never signed in" apart from "signed in, but the
-      // session did not reach us" instead of bouncing back to /login forever.
-      window.sessionStorage.setItem('marinelink:returned-from-signin', '1');
     } catch (e) {}
     requested = '/';
   }

@@ -5,12 +5,10 @@ import { WarningCircle } from "@phosphor-icons/react/dist/ssr";
 import { BrandMark } from "@/components/layout/brand-mark";
 import { Button } from "@/components/ui/button";
 import { renderSignInWidget } from "@/lib/auth/catalyst-session";
-import { useAuth } from "@/providers/auth-provider";
 
 const WIDGET_CONTAINER_ID = "catalyst-signin";
 
 export default function LoginPage() {
-  const { state } = useAuth();
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
@@ -63,14 +61,7 @@ export default function LoginPage() {
                 </Button>
               </div>
             ) : (
-              <>
-                {state.status === "loading" ? (
-                  <div className="px-4 py-10 text-center text-sm text-muted-foreground">
-                    Checking your session…
-                  </div>
-                ) : null}
-                <div id={WIDGET_CONTAINER_ID} />
-              </>
+              <div id={WIDGET_CONTAINER_ID} />
             )}
           </div>
 
